@@ -7,15 +7,12 @@ import { supabase } from '../../lib/supabase'
 import { Ionicons } from '@expo/vector-icons'
 import { useSteps } from '../../hooks/useSteps'
 import { fetchStepInsights, type StepInsights, updateProfileStepStreak } from '../../lib/stepInsights'
-import Svg, { Circle } from 'react-native-svg'
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name']
 
 const { width: SW } = Dimensions.get('window')
 const RING_SIZE = SW * 0.58
 const STROKE = 14
-const RADIUS = (RING_SIZE - STROKE) / 2
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 
 const QUICK_ACTIONS: { icon: IoniconName; label: string; route: string }[] = [
   { icon: 'barbell-outline', label: 'Workout', route: '/(tabs)/exercises' },
@@ -26,34 +23,14 @@ const QUICK_ACTIONS: { icon: IoniconName; label: string; route: string }[] = [
 
 function RingProgress({ progress }: { progress: number }) {
   const clampedProgress = Math.min(Math.max(progress, 0), 1)
-  const strokeDashoffset = CIRCUMFERENCE * (1 - clampedProgress)
   const pct = Math.round(clampedProgress * 100)
 
   return (
     <View style={{ width: RING_SIZE, height: RING_SIZE, alignItems: 'center', justifyContent: 'center' }}>
-      <Svg width={RING_SIZE} height={RING_SIZE} style={{ position: 'absolute' }}>
-        <Circle
-          cx={RING_SIZE / 2}
-          cy={RING_SIZE / 2}
-          r={RADIUS}
-          stroke="#f0ece8"
-          strokeWidth={STROKE}
-          fill="none"
-        />
-        <Circle
-          cx={RING_SIZE / 2}
-          cy={RING_SIZE / 2}
-          r={RADIUS}
-          stroke="#c2410c"
-          strokeWidth={STROKE}
-          fill="none"
-          strokeDasharray={`${CIRCUMFERENCE} ${CIRCUMFERENCE}`}
-          strokeDashoffset={strokeDashoffset}
-          strokeLinecap="round"
-          rotation="-90"
-          origin={`${RING_SIZE / 2}, ${RING_SIZE / 2}`}
-        />
-      </Svg>
+      <View style={{ position: 'absolute', width: RING_SIZE, height: RING_SIZE, borderRadius: RING_SIZE / 2, borderWidth: STROKE, borderColor: '#f0ece8' }} />
+      <View style={{ position: 'absolute', bottom: 42, width: RING_SIZE - 52, height: 10, borderRadius: 999, backgroundColor: '#ece5df', overflow: 'hidden' }}>
+        <View style={{ width: `${pct}%`, height: '100%', backgroundColor: '#c2410c', borderRadius: 999 }} />
+      </View>
       <View style={{ alignItems: 'center', gap: 4 }}>
         <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(194,65,12,0.1)', alignItems: 'center', justifyContent: 'center' }}>
           <Ionicons name="flame" size={22} color="#c2410c" />
@@ -92,41 +69,54 @@ export default function HomeScreen() {
 
   const fetchDashboard = useCallback(async () => {
     if (!session?.user?.id) return
-    const today = new Date().toISOString().split('T')[0]
-    const currentMonth = new Date().toISOString().slice(0, 7)
-    const stepGoal = profile?.daily_step_goal ?? 10000
+    try {
+      const today = new Date().toISOString().split('T')[0]
+      const currentMonth = new Date().toISOString().slice(0, 7)
+      const stepGoal = profile?.daily_step_goal ?? 10000
 
-    const [mealsRes, workoutsRes, leaderboardRes, stepInsights] = await Promise.all([
-      supabase.from('meals').select('food_name, calories, logged_at').eq('user_id', session.user.id).gte('logged_at', `${today}T00:00:00`).order('logged_at', { ascending: false }),
-      supabase.from('workouts').select('id', { count: 'exact' }).eq('user_id', session.user.id).gte('completed_at', `${today}T00:00:00`),
-      supabase.from('leaderboard_entries').select('total_points').eq('user_id', session.user.id).eq('month', currentMonth).single(),
-      fetchStepInsights(session.user.id, stepGoal),
-    ])
+      const [mealsRes, workoutsRes, leaderboardRes, stepInsights] = await Promise.all([
+        supabase.from('meals').select('food_name, calories, logged_at').eq('user_id', session.user.id).gte('logged_at', `${today}T00:00:00`).order('logged_at', { ascending: false }),
+        supabase.from('workouts').select('id', { count: 'exact' }).eq('user_id', session.user.id).gte('completed_at', `${today}T00:00:00`),
+        supabase.from('leaderboard_entries').select('total_points').eq('user_id', session.user.id).eq('month', currentMonth).single(),
+        fetchStepInsights(session.user.id, stepGoal),
+      ])
 
-    const meals = (mealsRes.data ?? []) as { food_name: string; calories: number; logged_at: string }[]
-    const totalCalories = meals.reduce((sum, m) => sum + m.calories, 0)
-    const myPoints = leaderboardRes.data?.total_points ?? 0
-    const rankRes = await supabase
-      .from('leaderboard_entries')
-      .select('user_id', { count: 'exact', head: true })
-      .eq('month', currentMonth)
-      .gt('total_points', myPoints)
-    const myRank = rankRes.error ? null : (rankRes.count ?? 0) + 1
+      const meals = (mealsRes.data ?? []) as { food_name: string; calories: number; logged_at: string }[]
+      const totalCalories = meals.reduce((sum, m) => sum + m.calories, 0)
+      const myPoints = leaderboardRes.data?.total_points ?? 0
+      const rankRes = await supabase
+        .from('leaderboard_entries')
+        .select('user_id', { count: 'exact', head: true })
+        .eq('month', currentMonth)
+        .gt('total_points', myPoints)
+      const myRank = rankRes.error ? null : (rankRes.count ?? 0) + 1
 
-    if (profile && stepInsights.currentStreak !== profile.streak_count) {
-      const updatedProfile = await updateProfileStepStreak(session.user.id, stepInsights.currentStreak)
-      if (updatedProfile) setProfile(updatedProfile)
+      if (profile && stepInsights.currentStreak !== profile.streak_count) {
+        const updatedProfile = await updateProfileStepStreak(session.user.id, stepInsights.currentStreak)
+        if (updatedProfile) setProfile(updatedProfile)
+      }
+
+      setData({
+        todayCalories: totalCalories,
+        todayWorkouts: workoutsRes.count ?? 0,
+        todayMeals: meals.slice(0, 3),
+        myRank,
+        myPoints,
+        stepInsights,
+      })
+    } catch (error) {
+      console.warn('Home dashboard error:', error)
+      setData({
+        todayCalories: 0,
+        todayWorkouts: 0,
+        todayMeals: [],
+        myRank: null,
+        myPoints: 0,
+        stepInsights: null,
+      })
+    } finally {
+      setLoading(false)
     }
-
-    setData({
-      todayCalories: totalCalories,
-      todayWorkouts: workoutsRes.count ?? 0,
-      todayMeals: meals.slice(0, 3),
-      myRank,
-      myPoints,
-      stepInsights,
-    })
-    setLoading(false)
   }, [profile, session?.user?.id, setProfile])
 
   useEffect(() => { fetchDashboard() }, [fetchDashboard])

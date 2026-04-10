@@ -15,10 +15,24 @@ export default function RootLayout() {
   const { setSession, setProfile, clearAuth, setHydrated, hydrated } = useAuthStore()
 
   useEffect(() => {
+    const resetToLoggedOut = () => {
+      clearAuth()
+      setHydrated(true)
+      resetStepRuntime()
+    }
+
     const initSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
-        if (error) { setHydrated(true); return }
+        if (error) {
+          if (error.message.toLowerCase().includes('refresh token')) {
+            await supabase.auth.signOut()
+            resetToLoggedOut()
+            return
+          }
+          setHydrated(true)
+          return
+        }
         setSession(session)
         if (session) {
           try {
@@ -31,7 +45,7 @@ export default function RootLayout() {
           setHydrated(true)
         }
       } catch {
-        setHydrated(true)
+        resetToLoggedOut()
       }
     }
     void initSession()
@@ -48,9 +62,7 @@ export default function RootLayout() {
             if (data) setProfile(data as Profile)
           })
       } else {
-        clearAuth()
-        setHydrated(true)
-        resetStepRuntime()
+        resetToLoggedOut()
       }
     })
 

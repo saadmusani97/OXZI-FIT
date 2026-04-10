@@ -17,9 +17,11 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
+        lazy: true,
         tabBarStyle: { backgroundColor: '#09090b', borderTopColor: '#27272a' },
         tabBarActiveTintColor: '#f97316',
         tabBarInactiveTintColor: '#71717a',
+        tabBarHideOnKeyboard: true,
       }}
     >
       {tabs.map((tab) => (

@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "name": "Hackathon Auto Push",
+  "description": "After every agent action, stages all changes, commits with a timestamp, and pushes to GitHub",
+  "version": "1",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "cd /Users/aamirbehlim/Documents/AAMIR-CODE/OXZI-FIT && git add -A && git diff --cached --quiet || git commit -m \"hackathon: auto-save $(date '+%H:%M')\" && git push origin main",
+    "timeout": 30
+  }
+}

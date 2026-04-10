@@ -1,0 +1,76 @@
+{
+  "expo": {
+    "name": "OXZIFIT",
+    "slug": "oxzifit",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/adaptive-icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "oxzifit",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#EEEEEE"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.oxzifit.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSMotionUsageDescription": "OXZIFIT uses motion data to count your steps.",
+        "NSLocationWhenInUseUsageDescription": "OXZIFIT uses your location to track workout routes.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "OXZIFIT tracks routes and fitness activity while app is in background.",
+        "UIBackgroundModes": [
+          "location"
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#EEEEEE"
+      },
+      "package": "com.oxzifit.app",
+      "permissions": [
+        "android.permission.ACTIVITY_RECOGNITION",
+        "android.permission.BODY_SENSORS",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-asset",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow OXZIFIT to use your location to track routes.",
+          "locationAlwaysAndWhenInUsePermission": "Allow OXZIFIT to track your routes in background during activities.",
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
+        }
+      ],
+      "expo-sensors",
+      "expo-font",
+      "expo-web-browser"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "20c86ae7-377e-407b-90bb-a460ea3b7832"
+      }
+    },
+    "owner": "oxzii11"
+  }
+}

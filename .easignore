@@ -1,0 +1,24 @@
+node_modules
+node_modules/
+node_modules_backup_*
+node_modules_backup_*/
+.expo
+.expo/
+android
+android/
+ios
+ios/
+.git
+.git/
+.kiro
+.vscode
+*.log
+*.tsbuildinfo
+.env.local
+.DS_Store
+dist
+app/* 2.tsx
+hooks/* 2.ts
+lib/* 2.ts
+stores/* 2.ts
+types/* 2.ts

@@ -1,5 +1,5 @@
--- Allow authenticated users to read profile rows so social surfaces like the leaderboard
--- can display names and avatars. This is broader than ideal for production, but it unblocks
--- the current client-side app architecture.
-CREATE POLICY "profiles_select_all_authenticated" ON profiles
-  FOR SELECT USING (auth.uid() IS NOT NULL);
+create or replace view public_profiles as
+  select id, full_name, avatar_url
+  from profiles;
+
+grant select on public_profiles to anon, authenticated;

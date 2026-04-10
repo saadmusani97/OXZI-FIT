@@ -8,7 +8,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
 import { useAuthStore } from '../stores/authStore'
 import { Profile } from '../types/database'
-import { useSteps } from '../hooks/useSteps'
+import { useSteps, resetStepRuntime } from '../hooks/useSteps'
 
 const queryClient = new QueryClient()
 
@@ -21,22 +21,26 @@ export default function RootLayout() {
   const { session, setSession, setProfile, clearAuth, setHydrated, hydrated } = useAuthStore()
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      if (session) {
-        supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
-          .then(({ data }) => {
+    const initSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        if (error) { setHydrated(true); return }
+        setSession(session)
+        if (session) {
+          try {
+            const { data } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
             if (data) setProfile(data as Profile)
+          } finally {
             setHydrated(true)
-          })
-      } else {
+          }
+        } else {
+          setHydrated(true)
+        }
+      } catch {
         setHydrated(true)
       }
-    })
+    }
+    void initSession()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
@@ -51,6 +55,7 @@ export default function RootLayout() {
           })
       } else {
         clearAuth()
+        resetStepRuntime()
       }
     })
 

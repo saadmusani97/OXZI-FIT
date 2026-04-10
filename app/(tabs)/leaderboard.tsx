@@ -101,15 +101,21 @@ function formatMonthLabel(month: string) {
 
 export default function LeaderboardScreen() {
   const { session } = useAuthStore()
-  const [entries, setEntries] = useState<LeaderboardEntry[]>([])
+  const [allEntries, setAllEntries] = useState<LeaderboardEntry[]>([])
+  const [friendIds, setFriendIds] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [scope, setScope] = useState<Scope>('global')
   const currentMonth = new Date().toISOString().slice(0, 7)
 
+  const entries = useMemo(() => {
+    if (scope === 'global') return allEntries
+    return allEntries.filter(row => friendIds.has(row.user_id))
+  }, [allEntries, friendIds, scope])
+
   const fetchLeaderboard = useCallback(async () => {
     if (!session?.user?.id) {
-      setEntries([])
+      setAllEntries([])
       setLoading(false)
       return
     }
@@ -132,25 +138,22 @@ export default function LeaderboardScreen() {
 
     const leaderboardRows = (leaderboardRes.data ?? []) as LeaderboardRow[]
 
-    const friendIds = new Set<string>([session.user.id])
+    const ids = new Set<string>([session.user.id])
     for (const friendship of friendshipsRes.data ?? []) {
       const counterpart = friendship.user_id === session.user.id ? friendship.friend_id : friendship.user_id
-      if (counterpart) friendIds.add(counterpart)
+      if (counterpart) ids.add(counterpart)
     }
+    setFriendIds(ids)
 
-    const visibleRows = scope === 'global'
-      ? leaderboardRows
-      : leaderboardRows.filter(row => friendIds.has(row.user_id))
-
-    if (visibleRows.length === 0) {
-      setEntries([])
+    if (leaderboardRows.length === 0) {
+      setAllEntries([])
       setLoading(false)
       return
     }
 
-    const userIds = [...new Set(visibleRows.map(row => row.user_id))]
+    const userIds = [...new Set(leaderboardRows.map(row => row.user_id))]
     const profilesRes = await supabase
-      .from('profiles')
+      .from('public_profiles')
       .select('id, full_name, avatar_url')
       .in('id', userIds)
 
@@ -158,14 +161,14 @@ export default function LeaderboardScreen() {
       ((profilesRes.data ?? []) as PublicProfile[]).map(profile => [profile.id, profile])
     )
 
-    setEntries(
-      visibleRows.map(row => ({
+    setAllEntries(
+      leaderboardRows.map(row => ({
         ...row,
         profile: profileMap.get(row.user_id) ?? null,
       }))
     )
     setLoading(false)
-  }, [currentMonth, scope, session?.user?.id])
+  }, [currentMonth, session?.user?.id])
 
   useEffect(() => {
     void fetchLeaderboard()

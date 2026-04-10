@@ -1,5 +1,6 @@
 import * as ImagePicker from 'expo-image-picker'
 import { readAsStringAsync } from 'expo-file-system/legacy'
+import { supabase } from './supabase'
 
 export interface IngredientResult {
   food_name: string
@@ -37,9 +38,6 @@ export interface NutritionResult {
   ingredients: IngredientResult[]
   analysis_notes: string
 }
-
-const GROQ_API_KEY = process.env.EXPO_PUBLIC_GROQ_API_KEY ?? ''
-const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions'
 
 async function imageToBase64(uri: string): Promise<string> {
   const base64 = await readAsStringAsync(uri, { encoding: 'base64' })
@@ -159,35 +157,15 @@ Return ONLY valid JSON. No markdown. No explanation. No text outside the JSON.
   "analysis_notes": "brief note on any assumptions made or low-confidence areas"
 }`
 
-  const response = await fetch(GROQ_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${GROQ_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-      messages: [
-        {
-          role: 'user',
-          content: [
-            { type: 'text', text: prompt },
-            { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${base64}` } }
-          ]
-        }
-      ],
-      temperature: 0.1,
-      max_tokens: 2048,
-    })
+  const { data, error } = await supabase.functions.invoke('scan-food', {
+    body: { base64, prompt },
   })
 
-  if (!response.ok) {
-    const err = await response.text()
-    throw new Error(`Groq API error ${response.status}: ${err}`)
+  if (error) {
+    throw new Error(`Scan function error: ${error.message}`)
   }
 
-  const data = await response.json()
-  const text = data.choices?.[0]?.message?.content ?? ''
+  const text = (data as { choices?: { message?: { content?: string } }[] })?.choices?.[0]?.message?.content ?? ''
 
   const jsonMatch = text.match(/\{[\s\S]*\}/)
   if (!jsonMatch) throw new Error(`No JSON in response: ${text}`)

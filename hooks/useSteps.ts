@@ -233,6 +233,27 @@ function stopLiveTracking() {
   }
 }
 
+export function resetStepRuntime() {
+  stopLiveTracking()
+  appStateSubscription?.remove()
+  appStateSubscription = null
+  runtimeStarted = false
+  runtimeStartPromise = null
+  liveSteps = 0
+  watchStepCount = null
+  watchStepCountAt = 0
+  lastSyncAt = 0
+  lastSavedAt = 0
+  lastSavedSteps = null
+  syncInFlight = null
+  liveStepHandling = false
+  pendingLiveSteps = null
+  runtimeStatus = 'loading'
+  useStepStore.getState().setSteps(0)
+  useStepStore.getState().setGoalReached(false)
+  notifyListeners()
+}
+
 function startLiveTracking() {
   if (pedometerSubscription || runtimeStatus !== 'active') return
 

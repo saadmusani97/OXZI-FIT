@@ -2,6 +2,8 @@ import * as ImagePicker from 'expo-image-picker'
 import { readAsStringAsync } from 'expo-file-system/legacy'
 import { supabase } from './supabase'
 
+const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions'
+
 export interface IngredientResult {
   food_name: string
   quantity_amount: number
@@ -42,6 +44,50 @@ export interface NutritionResult {
 async function imageToBase64(uri: string): Promise<string> {
   const base64 = await readAsStringAsync(uri, { encoding: 'base64' })
   return base64
+}
+
+async function requestNutritionAnalysis(base64: string, prompt: string) {
+  const { data, error } = await supabase.functions.invoke('scan-food', {
+    body: { base64, prompt },
+  })
+
+  if (!error) {
+    return data
+  }
+
+  const publicGroqKey = process.env.EXPO_PUBLIC_GROQ_API_KEY
+  if (!publicGroqKey) {
+    throw new Error(`Scan function error: ${error.message}`)
+  }
+
+  const response = await fetch(GROQ_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${publicGroqKey}`,
+    },
+    body: JSON.stringify({
+      model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+      messages: [
+        {
+          role: 'user',
+          content: [
+            { type: 'text', text: prompt },
+            { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${base64}` } },
+          ],
+        },
+      ],
+      temperature: 0.1,
+      max_tokens: 2048,
+    }),
+  })
+
+  if (!response.ok) {
+    const body = await response.text()
+    throw new Error(`Scan function error: ${error.message}. Groq fallback failed: ${response.status} ${body}`)
+  }
+
+  return await response.json()
 }
 
 export async function scanFoodImage(imageUri: string): Promise<NutritionResult> {
@@ -157,13 +203,7 @@ Return ONLY valid JSON. No markdown. No explanation. No text outside the JSON.
   "analysis_notes": "brief note on any assumptions made or low-confidence areas"
 }`
 
-  const { data, error } = await supabase.functions.invoke('scan-food', {
-    body: { base64, prompt },
-  })
-
-  if (error) {
-    throw new Error(`Scan function error: ${error.message}`)
-  }
+  const data = await requestNutritionAnalysis(base64, prompt)
 
   const text = (data as { choices?: { message?: { content?: string } }[] })?.choices?.[0]?.message?.content ?? ''
 

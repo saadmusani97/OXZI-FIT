@@ -11,8 +11,8 @@ import { fetchStepInsights, type StepInsights, updateProfileStepStreak } from '.
 type IoniconName = React.ComponentProps<typeof Ionicons>['name']
 
 const { width: SW } = Dimensions.get('window')
-const RING_SIZE = SW * 0.58
-const STROKE = 14
+const RING_SIZE = SW * 0.52
+const STROKE = 16
 
 const QUICK_ACTIONS: { icon: IoniconName; label: string; route: string }[] = [
   { icon: 'barbell-outline', label: 'Workout', route: '/(tabs)/exercises' },
@@ -22,27 +22,57 @@ const QUICK_ACTIONS: { icon: IoniconName; label: string; route: string }[] = [
 ]
 
 function RingProgress({ progress }: { progress: number }) {
-  const clampedProgress = Math.min(Math.max(progress, 0), 1)
-  const pct = Math.round(clampedProgress * 100)
+  const p = Math.min(Math.max(progress, 0), 1)
+  const pct = Math.round(p * 100)
+  const innerSize = RING_SIZE - STROKE * 2
 
   return (
     <View style={{ width: RING_SIZE, height: RING_SIZE, alignItems: 'center', justifyContent: 'center' }}>
+      {/* Track */}
       <View style={{ position: 'absolute', width: RING_SIZE, height: RING_SIZE, borderRadius: RING_SIZE / 2, borderWidth: STROKE, borderColor: '#f0ece8' }} />
-      <View style={{ position: 'absolute', bottom: 42, width: RING_SIZE - 52, height: 10, borderRadius: 999, backgroundColor: '#ece5df', overflow: 'hidden' }}>
-        <View style={{ width: `${pct}%`, height: '100%', backgroundColor: '#c2410c', borderRadius: 999 }} />
+
+      {/* Progress arc — left half */}
+      <View style={{ position: 'absolute', width: RING_SIZE, height: RING_SIZE, borderRadius: RING_SIZE / 2, overflow: 'hidden' }}>
+        <View style={{ position: 'absolute', left: 0, top: 0, width: RING_SIZE / 2, height: RING_SIZE, overflow: 'hidden' }}>
+          <View style={{
+            position: 'absolute', left: 0, top: 0,
+            width: RING_SIZE, height: RING_SIZE,
+            borderRadius: RING_SIZE / 2,
+            borderWidth: STROKE,
+            borderColor: p > 0.5 ? '#c2410c' : 'transparent',
+            borderRightColor: 'transparent',
+            borderTopColor: 'transparent',
+            transform: [{ rotate: `${Math.min(p * 360, 180) - 180}deg` }],
+          }} />
+        </View>
+        <View style={{ position: 'absolute', right: 0, top: 0, width: RING_SIZE / 2, height: RING_SIZE, overflow: 'hidden' }}>
+          <View style={{
+            position: 'absolute', right: 0, top: 0,
+            width: RING_SIZE, height: RING_SIZE,
+            borderRadius: RING_SIZE / 2,
+            borderWidth: STROKE,
+            borderColor: p > 0 ? '#c2410c' : 'transparent',
+            borderLeftColor: 'transparent',
+            borderTopColor: 'transparent',
+            transform: [{ rotate: `${Math.max(p * 360 - 180, 0)}deg` }],
+          }} />
+        </View>
       </View>
-      <View style={{ alignItems: 'center', gap: 4 }}>
+
+      {/* Inner content */}
+      <View style={{ width: innerSize, height: innerSize, borderRadius: innerSize / 2, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
         <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(194,65,12,0.1)', alignItems: 'center', justifyContent: 'center' }}>
           <Ionicons name="flame" size={22} color="#c2410c" />
         </View>
-        <Text style={{ color: '#111827', fontSize: 22, fontWeight: '900', marginTop: 4 }}>{pct}%</Text>
+        <Text style={{ color: '#111827', fontSize: 24, fontWeight: '900', marginTop: 4 }}>{pct}%</Text>
+        <Text style={{ color: '#9a7b6e', fontSize: 11, fontWeight: '700' }}>of goal</Text>
       </View>
     </View>
   )
 }
 
 interface DashboardData {
-  todayCalories: number
+  todayMealCalories: number
   todayWorkouts: number
   todayMeals: { food_name: string; calories: number; logged_at: string }[]
   myRank: number | null
@@ -52,10 +82,10 @@ interface DashboardData {
 
 export default function HomeScreen() {
   const { profile, session, setProfile } = useAuthStore()
-  const { steps, distanceKm, progress, status, refresh: refreshSteps } = useSteps()
+  const { steps, distanceKm, caloriesBurned, progress, status, refresh: refreshSteps } = useSteps()
   const [refreshing, setRefreshing] = useState(false)
   const [data, setData] = useState<DashboardData>({
-    todayCalories: 0,
+    todayMealCalories: 0,
     todayWorkouts: 0,
     todayMeals: [],
     myRank: null,
@@ -97,7 +127,7 @@ export default function HomeScreen() {
       }
 
       setData({
-        todayCalories: totalCalories,
+        todayMealCalories: totalCalories,
         todayWorkouts: workoutsRes.count ?? 0,
         todayMeals: meals.slice(0, 3),
         myRank,
@@ -107,7 +137,7 @@ export default function HomeScreen() {
     } catch (error) {
       console.warn('Home dashboard error:', error)
       setData({
-        todayCalories: 0,
+        todayMealCalories: 0,
         todayWorkouts: 0,
         todayMeals: [],
         myRank: null,
@@ -146,7 +176,7 @@ export default function HomeScreen() {
   }
 
   const dailyCalGoal = profile?.daily_calorie_goal ?? 2000
-  const calProgress = Math.min(data.todayCalories / dailyCalGoal, 1)
+  const mealProgress = Math.min(data.todayMealCalories / dailyCalGoal, 1)
   const streakCount = data.stepInsights?.currentStreak ?? profile?.streak_count ?? 0
   const firstName = profile?.full_name?.split(' ')[0] ?? 'Athlete'
   const activeMinutes = data.todayWorkouts * 30
@@ -183,12 +213,12 @@ export default function HomeScreen() {
 
           {/* Energy Card */}
           <View style={{ marginHorizontal: 22, backgroundColor: '#fff', borderRadius: 28, padding: 24, marginBottom: 20, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 16, elevation: 3 }}>
-            <Text style={{ color: '#c2410c', fontSize: 11, fontWeight: '800', letterSpacing: 1.4, textTransform: 'uppercase', textAlign: 'center', marginBottom: 4 }}>Daily Energy</Text>
+            <Text style={{ color: '#c2410c', fontSize: 11, fontWeight: '800', letterSpacing: 1.4, textTransform: 'uppercase', textAlign: 'center', marginBottom: 4 }}>Step Burn</Text>
             <Text style={{ color: '#111827', fontSize: 44, fontWeight: '900', textAlign: 'center', letterSpacing: -1 }}>
-              {data.todayCalories.toLocaleString()}
+              {Math.round(caloriesBurned).toLocaleString()}
             </Text>
             <Text style={{ color: '#9a7b6e', fontSize: 14, textAlign: 'center', marginBottom: 20 }}>
-              / {dailyCalGoal.toLocaleString()} kcal burned
+              {steps.toLocaleString()} steps today
             </Text>
 
             <TouchableOpacity
@@ -196,11 +226,11 @@ export default function HomeScreen() {
               style={{ backgroundColor: '#c2410c', borderRadius: 50, paddingVertical: 14, alignItems: 'center', marginBottom: 28 }}
               activeOpacity={0.85}
             >
-              <Text style={{ color: '#fff', fontSize: 15, fontWeight: '800' }}>View Analytics</Text>
+              <Text style={{ color: '#fff', fontSize: 15, fontWeight: '800' }}>Open Meal Log</Text>
             </TouchableOpacity>
 
             <View style={{ alignItems: 'center' }}>
-              <RingProgress progress={calProgress} />
+              <RingProgress progress={progress} />
             </View>
           </View>
 
@@ -295,11 +325,11 @@ export default function HomeScreen() {
               <View style={{ flex: 1 }}>
                 <Text style={{ color: '#111827', fontSize: 14, fontWeight: '900', marginBottom: 4 }}>OXZIFIT Coach Insight</Text>
                 <Text style={{ color: '#6b5e58', fontSize: 13, lineHeight: 20 }}>
-                  {Math.round(calProgress * 100) < 50
-                    ? `Great start, ${firstName}! You're ${Math.round(calProgress * 100)}% to your daily goal. Keep logging meals to stay on track.`
-                    : Math.round(calProgress * 100) < 90
-                    ? `Good progress, ${firstName}! You're ${Math.round(calProgress * 100)}% to your daily goal. A quick 15-minute walk will bridge the gap.`
-                    : `Excellent work, ${firstName}! You've nearly hit your daily energy goal. Rest up and recover well.`}
+                  {Math.round(mealProgress * 100) < 50
+                    ? `Great start, ${firstName}! You're ${Math.round(mealProgress * 100)}% to your daily meal goal. Keep logging meals to stay on track.`
+                    : Math.round(mealProgress * 100) < 90
+                    ? `Good progress, ${firstName}! You're ${Math.round(mealProgress * 100)}% to your daily meal goal. A quick 15-minute walk will help your balance.`
+                    : `Excellent work, ${firstName}! You've nearly hit your daily meal goal. Rest up and recover well.`}
                 </Text>
               </View>
             </View>

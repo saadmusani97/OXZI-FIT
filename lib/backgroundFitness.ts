@@ -399,11 +399,11 @@ export async function startBackgroundFitnessTrackingAsync(params: {
 
 function getLocationUpdateOptions(): Location.LocationTaskOptions {
   return {
-    accuracy: Location.Accuracy.BestForNavigation,
-    timeInterval: 3000,
-    distanceInterval: 2,
+    accuracy: Location.Accuracy.Balanced,
+    timeInterval: 10000,
+    distanceInterval: 10,
     activityType: Location.ActivityType.Fitness,
-    pausesUpdatesAutomatically: false,
+    pausesUpdatesAutomatically: true,
     foregroundService: {
       notificationTitle: 'OXZIFIT tracking active',
       notificationBody: 'Route and steps are being collected in background',

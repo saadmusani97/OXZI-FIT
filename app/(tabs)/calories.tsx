@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import {
   View, Text, TouchableOpacity, ScrollView, Image,
-  Alert, Animated, Dimensions, Modal, StatusBar, TextInput
+  Alert, Animated, Dimensions, Modal, StatusBar, TextInput, ActivityIndicator
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -479,82 +479,79 @@ export default function CaloriesScreen() {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <LinearGradient colors={['#0a0a0f', '#0a0f0a', '#0f0a1a']} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
-      <View style={{ position: 'absolute', top: -60, left: -60, width: 220, height: 220, borderRadius: 110, backgroundColor: 'rgba(34,197,94,0.1)' }} />
+    <View style={{ flex: 1, backgroundColor: '#fff7f0' }}>
+      <LinearGradient colors={['#fffdf8', '#fff5ea', '#fff0e0']} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
+      <View style={{ position: 'absolute', top: -70, right: -20, width: 220, height: 220, borderRadius: 110, backgroundColor: 'rgba(249,115,22,0.12)' }} />
+      <View style={{ position: 'absolute', top: 280, left: -70, width: 240, height: 240, borderRadius: 120, backgroundColor: 'rgba(251,146,60,0.08)' }} />
 
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
 
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 16, marginBottom: 24 }}>
-            <View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-              <Text style={{ color: '#fff', fontSize: 26, fontWeight: '800' }}>Cal AI</Text>
-              <Ionicons name="camera-outline" size={22} color="#f97316" />
+          <View style={{ marginTop: 16, marginBottom: 18, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: '#7c2d12', fontSize: 12, fontWeight: '800', letterSpacing: 1.2, textTransform: 'uppercase' }}>Nutrition Tracker</Text>
+              <Text style={{ color: '#111827', fontSize: 32, fontWeight: '900', marginTop: 6 }}>Cal AI</Text>
+              <Text style={{ color: '#9a3412', fontSize: 14, marginTop: 4 }}>Scan your food for instant nutrition</Text>
             </View>
-              <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, marginTop: 2 }}>Scan your food for instant nutrition</Text>
-            </View>
+            <BlurView intensity={40} tint="light" style={{ borderRadius: 18, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.75)' }}>
+              <View style={{ width: 38, height: 38, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.45)' }}>
+                <Ionicons name="camera-outline" size={18} color="#f97316" />
+              </View>
+            </BlurView>
           </View>
 
-          <TouchableOpacity
-            onPress={() => setSheetVisible(true)}
-            activeOpacity={0.88}
-            style={{ marginBottom: 20 }}
-          >
-            <LinearGradient
-              colors={['#f97316', '#ea580c']}
-              start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-              style={{ borderRadius: 24, padding: 24, flexDirection: 'row', alignItems: 'center', gap: 16 }}
-            >
-              <View style={{ width: 60, height: 60, borderRadius: 30, backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center' }}>
-                <Ionicons name="camera" size={30} color="#fff" />
+          <TouchableOpacity onPress={() => setSheetVisible(true)} activeOpacity={0.88} style={{ marginBottom: 18 }}>
+            <LinearGradient colors={['#f97316', '#ea580c']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ borderRadius: 28, padding: 22, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+              <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center' }}>
+                <Ionicons name="camera" size={28} color="#fff" />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ color: '#fff', fontSize: 18, fontWeight: '800' }}>Scan a Meal</Text>
+                <Text style={{ color: '#fff', fontSize: 18, fontWeight: '900' }}>Scan a Meal</Text>
                 <Text style={{ color: 'rgba(255,255,255,0.75)', fontSize: 13, marginTop: 3 }}>AI-powered nutrition analysis</Text>
               </View>
               <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.6)" />
             </LinearGradient>
           </TouchableOpacity>
 
-          <BlurView intensity={18} tint="dark" style={{ borderRadius: 24, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', marginBottom: 20 }}>
-            <View style={{ backgroundColor: 'rgba(255,255,255,0.05)', padding: 20 }}>
-              <Text style={{ color: '#fff', fontSize: 15, fontWeight: '700', marginBottom: 16 }}>{"Today's Nutrition"}</Text>
+          <BlurView intensity={45} tint="light" style={{ borderRadius: 30, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.78)', marginBottom: 18 }}>
+            <View style={{ backgroundColor: 'rgba(255,255,255,0.58)', padding: 18 }}>
+              <Text style={{ color: '#111827', fontSize: 16, fontWeight: '900', marginBottom: 14 }}>{"Today's Nutrition"}</Text>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 14 }}>
                 <View style={{ alignItems: 'center' }}>
                   <Text style={{ color: '#f97316', fontSize: 22, fontWeight: '900' }}>{totalCalories}</Text>
-                  <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>/ {dailyCalGoal} kcal</Text>
+                  <Text style={{ color: '#9a3412', fontSize: 11, fontWeight: '700' }}>/ {dailyCalGoal} kcal</Text>
                 </View>
                 <View style={{ alignItems: 'center' }}>
                   <Text style={{ color: '#3b82f6', fontSize: 18, fontWeight: '800' }}>{Math.round(totalProtein)}g</Text>
-                  <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>protein</Text>
+                  <Text style={{ color: '#9a3412', fontSize: 11, fontWeight: '700' }}>protein</Text>
                 </View>
                 <View style={{ alignItems: 'center' }}>
                   <Text style={{ color: '#f97316', fontSize: 18, fontWeight: '800' }}>{Math.round(totalCarbs)}g</Text>
-                  <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>carbs</Text>
+                  <Text style={{ color: '#9a3412', fontSize: 11, fontWeight: '700' }}>carbs</Text>
                 </View>
                 <View style={{ alignItems: 'center' }}>
                   <Text style={{ color: '#a855f7', fontSize: 18, fontWeight: '800' }}>{Math.round(totalFat)}g</Text>
-                  <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>fat</Text>
+                  <Text style={{ color: '#9a3412', fontSize: 11, fontWeight: '700' }}>fat</Text>
                 </View>
               </View>
-              <View style={{ backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 8, height: 8 }}>
+              <View style={{ backgroundColor: 'rgba(249,115,22,0.12)', borderRadius: 8, height: 8 }}>
                 <View style={{ backgroundColor: '#f97316', borderRadius: 8, height: 8, width: `${Math.min(totalCalories / dailyCalGoal, 1) * 100}%` }} />
               </View>
             </View>
           </BlurView>
 
-          <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700', marginBottom: 12 }}>{"Today's Meals"}</Text>
+          <Text style={{ color: '#111827', fontSize: 16, fontWeight: '900', marginBottom: 12 }}>{"Today's Meals"}</Text>
 
           {loadingMeals ? (
-            <View style={{ alignItems: 'center', paddingVertical: 32 }}>
-              <Ionicons name="restaurant-outline" size={32} color="rgba(255,255,255,0.2)" />
-            </View>
+            <ActivityIndicator color="#f97316" style={{ marginVertical: 32 }} />
           ) : meals.length === 0 ? (
-            <BlurView intensity={15} tint="dark" style={{ borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' }}>
-              <View style={{ backgroundColor: 'rgba(255,255,255,0.04)', padding: 32, alignItems: 'center', gap: 10 }}>
-                <Ionicons name="restaurant-outline" size={36} color="rgba(255,255,255,0.2)" />
-                <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, textAlign: 'center' }}>No meals logged today{'\n'}Scan your first meal</Text>
+            <BlurView intensity={45} tint="light" style={{ borderRadius: 30, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.78)' }}>
+              <View style={{ backgroundColor: 'rgba(255,255,255,0.58)', padding: 32, alignItems: 'center', gap: 10 }}>
+                <View style={{ width: 52, height: 52, borderRadius: 26, backgroundColor: 'rgba(249,115,22,0.12)', alignItems: 'center', justifyContent: 'center' }}>
+                  <Ionicons name="restaurant-outline" size={26} color="#f97316" />
+                </View>
+                <Text style={{ color: '#111827', fontSize: 15, fontWeight: '800' }}>No meals logged today</Text>
+                <Text style={{ color: '#9a3412', fontSize: 13, textAlign: 'center' }}>Scan your first meal to get started</Text>
               </View>
             </BlurView>
           ) : (
@@ -562,18 +559,18 @@ export default function CaloriesScreen() {
               const grade = calculateMealGrade(meal.calories, meal.protein_g, meal.fat_g).grade
               const gc = GRADE_COLORS[grade] ?? '#22c55e'
               return (
-                <BlurView key={meal.id} intensity={15} tint="dark" style={{ borderRadius: 18, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', marginBottom: 10 }}>
-                  <View style={{ backgroundColor: 'rgba(255,255,255,0.04)', padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <BlurView key={meal.id} intensity={45} tint="light" style={{ borderRadius: 24, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.78)', marginBottom: 10 }}>
+                  <View style={{ backgroundColor: 'rgba(255,255,255,0.58)', padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                     <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: gc + '22', alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ fontSize: 15, fontWeight: '800', color: gc }}>{grade}</Text>
+                      <Text style={{ fontSize: 15, fontWeight: '900', color: gc }}>{grade}</Text>
                     </View>
                     <View style={{ flex: 1 }}>
-                      <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15 }}>{meal.food_name}</Text>
-                      <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, marginTop: 2 }}>
+                      <Text style={{ color: '#111827', fontWeight: '800', fontSize: 15 }}>{meal.food_name}</Text>
+                      <Text style={{ color: '#9a3412', fontSize: 12, marginTop: 2 }}>
                         {meal.calories} kcal · P:{meal.protein_g}g · C:{meal.carbs_g}g · F:{meal.fat_g}g
                       </Text>
                     </View>
-                    <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: 11 }}>
+                    <Text style={{ color: '#9a3412', fontSize: 11, fontWeight: '700' }}>
                       {new Date(meal.logged_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </Text>
                   </View>

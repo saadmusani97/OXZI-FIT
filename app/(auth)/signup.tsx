@@ -49,80 +49,88 @@ export default function SignupScreen() {
   return (
     <KeyboardAvoidingView
       className="flex-1 bg-black"
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView
-        contentContainerClassName="flex-grow justify-center px-6 py-12"
+        contentContainerClassName="flex-grow px-6 py-12"
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
+        automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'}
       >
-        <View className="items-center mb-12">
-          <Text className="text-orange-500 text-4xl font-black tracking-widest">OXZIFIT</Text>
-          <Text className="text-zinc-400 text-sm mt-1">Create your account</Text>
+        <View className="flex-1 justify-center">
+          <View className="items-center mb-12">
+            <Text className="text-orange-500 text-4xl font-black tracking-widest">OXZIFIT</Text>
+            <Text className="text-zinc-400 text-sm mt-1">Create your account</Text>
+          </View>
+
+          <View className="gap-4">
+            <TextInput
+              className="bg-zinc-800 text-white rounded-xl px-4 py-4 text-base"
+              placeholder="Full Name"
+              placeholderTextColor="#71717a"
+              value={fullName}
+              onChangeText={setFullName}
+              autoComplete="name"
+              returnKeyType="next"
+            />
+            <TextInput
+              className="bg-zinc-800 text-white rounded-xl px-4 py-4 text-base"
+              placeholder="Email"
+              placeholderTextColor="#71717a"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              autoComplete="email"
+              returnKeyType="next"
+            />
+            <TextInput
+              className="bg-zinc-800 text-white rounded-xl px-4 py-4 text-base"
+              placeholder="Password"
+              placeholderTextColor="#71717a"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              autoComplete="new-password"
+              returnKeyType="next"
+            />
+            <TextInput
+              className="bg-zinc-800 text-white rounded-xl px-4 py-4 text-base"
+              placeholder="Confirm Password"
+              placeholderTextColor="#71717a"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry
+              autoComplete="new-password"
+              returnKeyType="done"
+            />
+          </View>
+
+          {error !== '' && (
+            <Text className="text-red-500 text-sm mt-3">{error}</Text>
+          )}
+
+          <TouchableOpacity
+            className={`bg-orange-500 rounded-xl py-4 mt-6 ${loading ? 'opacity-50' : ''}`}
+            onPress={handleSignup}
+            disabled={loading}
+            activeOpacity={0.8}
+          >
+            <Text className="text-white font-semibold text-center text-base">
+              {loading ? 'Creating account...' : 'Create Account'}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="mt-6 items-center"
+            onPress={() => router.push('/(auth)/login')}
+          >
+            <Text className="text-zinc-400 text-sm">
+              Already have an account?{' '}
+              <Text className="text-orange-500 font-semibold">Login</Text>
+            </Text>
+          </TouchableOpacity>
         </View>
-
-        <View className="gap-4">
-          <TextInput
-            className="bg-zinc-800 text-white rounded-xl px-4 py-4 text-base"
-            placeholder="Full Name"
-            placeholderTextColor="#71717a"
-            value={fullName}
-            onChangeText={setFullName}
-            autoComplete="name"
-          />
-          <TextInput
-            className="bg-zinc-800 text-white rounded-xl px-4 py-4 text-base"
-            placeholder="Email"
-            placeholderTextColor="#71717a"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            autoComplete="email"
-          />
-          <TextInput
-            className="bg-zinc-800 text-white rounded-xl px-4 py-4 text-base"
-            placeholder="Password"
-            placeholderTextColor="#71717a"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            autoComplete="new-password"
-          />
-          <TextInput
-            className="bg-zinc-800 text-white rounded-xl px-4 py-4 text-base"
-            placeholder="Confirm Password"
-            placeholderTextColor="#71717a"
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            secureTextEntry
-            autoComplete="new-password"
-          />
-        </View>
-
-        {error !== '' && (
-          <Text className="text-red-500 text-sm mt-3">{error}</Text>
-        )}
-
-        <TouchableOpacity
-          className={`bg-orange-500 rounded-xl py-4 mt-6 ${loading ? 'opacity-50' : ''}`}
-          onPress={handleSignup}
-          disabled={loading}
-          activeOpacity={0.8}
-        >
-          <Text className="text-white font-semibold text-center text-base">
-            {loading ? 'Creating account...' : 'Create Account'}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          className="mt-6 items-center"
-          onPress={() => router.push('/(auth)/login')}
-        >
-          <Text className="text-zinc-400 text-sm">
-            Already have an account?{' '}
-            <Text className="text-orange-500 font-semibold">Login</Text>
-          </Text>
-        </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
   )

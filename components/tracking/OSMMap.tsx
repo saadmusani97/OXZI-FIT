@@ -1,4 +1,4 @@
-import { useRef, useEffect, memo, useMemo, useState } from 'react'
+import { useRef, useEffect, memo, useState } from 'react'
 import { View } from 'react-native'
 import { WebView } from 'react-native-webview'
 
@@ -156,6 +156,8 @@ window.ReactNativeWebView.postMessage('ready');
 </body>
 </html>`
 
+const MAP_SOURCE = { html: MAP_HTML }
+
 function OSMMap({
   center,
   route,
@@ -167,10 +169,13 @@ function OSMMap({
   const internalRef = useRef<WebView>(null)
   const ref = mapRef ?? internalRef
   const [mapReady, setMapReady] = useState(false)
-  const routeJson = useMemo(() => JSON.stringify(route), [route])
-  const source = useMemo(() => ({ html: MAP_HTML }), [])
   const lastRouteLengthRef = useRef(0)
-  const lastRouteJsonRef = useRef('')
+  const lastPointSignatureRef = useRef('')
+  const lastSyncRouteLengthRef = useRef(0)
+  const lastPoint = route[route.length - 1]
+  const lastPointSignature = lastPoint
+    ? `${lastPoint.latitude}:${lastPoint.longitude}:${lastPoint.timestamp ?? 0}:${lastPoint.speedKmh ?? 0}`
+    : ''
 
   function onMessage(e: { nativeEvent: { data: string } }) {
     if (e.nativeEvent.data === 'ready') {
@@ -192,29 +197,31 @@ function OSMMap({
 
   useEffect(() => {
     if (!mapReady) return
-    const isInitialSync = lastRouteJsonRef.current === ''
+    const isInitialSync = lastSyncRouteLengthRef.current === 0
     const routeShrank = route.length < lastRouteLengthRef.current
-    const routeMutatedWithoutGrowth = route.length === lastRouteLengthRef.current && routeJson !== lastRouteJsonRef.current
+    const routeMutatedWithoutGrowth = route.length === lastRouteLengthRef.current && lastPointSignature !== lastPointSignatureRef.current
 
     if (isInitialSync || routeShrank || routeMutatedWithoutGrowth) {
-      ref.current?.injectJavaScript(`window.setRoute(${routeJson});true;`)
+      ref.current?.injectJavaScript(`window.setRoute(${JSON.stringify(route)});true;`)
       lastRouteLengthRef.current = route.length
-      lastRouteJsonRef.current = routeJson
+      lastSyncRouteLengthRef.current = route.length
+      lastPointSignatureRef.current = lastPointSignature
       return
     }
     for (let i = lastRouteLengthRef.current; i < route.length; i++) {
       ref.current?.injectJavaScript(`window.addPoint(${JSON.stringify(route[i])});true;`)
     }
     lastRouteLengthRef.current = route.length
-    lastRouteJsonRef.current = routeJson
+    lastSyncRouteLengthRef.current = route.length
+    lastPointSignatureRef.current = lastPointSignature
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [route.length, routeJson, mapReady])
+  }, [lastPointSignature, mapReady, route])
 
   return (
     <View style={[{flex:1},style]}>
       <WebView
         ref={ref}
-        source={source}
+        source={MAP_SOURCE}
         style={{flex:1,backgroundColor:'#0a0a0f'}}
         scrollEnabled={false}
         javaScriptEnabled

@@ -4,6 +4,7 @@ import type { ViewStyle } from 'react-native'
 import { useRouter } from 'expo-router'
 import * as Location from 'expo-location'
 import { BlurView } from 'expo-blur'
+import { LinearGradient } from 'expo-linear-gradient'
 import { Ionicons } from '@expo/vector-icons'
 import type { WebView } from 'react-native-webview'
 import { useAuthStore } from '../../stores/authStore'
@@ -31,8 +32,8 @@ type IoniconName = React.ComponentProps<typeof Ionicons>['name']
 
 function GlassCard({ children, style }: { children: React.ReactNode; style?: ViewStyle }) {
   return (
-    <BlurView intensity={24} tint="dark" style={[{ borderRadius: 24, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }, style]}>
-      <View style={{ backgroundColor: 'rgba(255,255,255,0.06)', padding: 16 }}>
+    <BlurView intensity={45} tint="light" style={[{ borderRadius: 28, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.78)' }, style]}>
+      <View style={{ backgroundColor: 'rgba(255,255,255,0.58)', padding: 16 }}>
         {children}
       </View>
     </BlurView>
@@ -42,8 +43,8 @@ function GlassCard({ children, style }: { children: React.ReactNode; style?: Vie
 function StatItem({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
     <View style={{ flex: 1, alignItems: 'center', gap: 6 }}>
-      <Text style={{ color: accent ? '#f97316' : '#fff', fontSize: 24, fontWeight: '900' }}>{value}</Text>
-      <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8 }}>{label}</Text>
+      <Text style={{ color: accent ? '#f97316' : '#111827', fontSize: 24, fontWeight: '900' }}>{value}</Text>
+      <Text style={{ color: '#9a3412', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8 }}>{label}</Text>
     </View>
   )
 }
@@ -89,35 +90,11 @@ function ControlButton({
   )
 }
 
-function ActionChip({
-  label,
-  icon,
-  active,
-  onPress,
-}: {
-  label: string
-  icon: IoniconName
-  active?: boolean
-  onPress: () => void
-}) {
+function ActionChip({ label, icon, active, onPress }: { label: string; icon: IoniconName; active?: boolean; onPress: () => void }) {
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      activeOpacity={0.82}
-      style={{
-        flex: 1,
-        borderRadius: 18,
-        paddingVertical: 14,
-        paddingHorizontal: 12,
-        alignItems: 'center',
-        gap: 8,
-        backgroundColor: active ? 'rgba(249,115,22,0.18)' : 'rgba(255,255,255,0.05)',
-        borderWidth: 1,
-        borderColor: active ? 'rgba(249,115,22,0.4)' : 'rgba(255,255,255,0.08)',
-      }}
-    >
-      <Ionicons name={icon} size={20} color={active ? '#f97316' : '#fff'} />
-      <Text style={{ color: '#fff', fontSize: 12, fontWeight: '700', textAlign: 'center' }}>{label}</Text>
+    <TouchableOpacity onPress={onPress} activeOpacity={0.82} style={{ flex: 1, borderRadius: 18, paddingVertical: 14, paddingHorizontal: 12, alignItems: 'center', gap: 8, backgroundColor: active ? 'rgba(249,115,22,0.18)' : 'rgba(255,255,255,0.6)', borderWidth: 1, borderColor: active ? 'rgba(249,115,22,0.4)' : 'rgba(249,115,22,0.15)' }}>
+      <Ionicons name={icon} size={20} color={active ? '#f97316' : '#7c2d12'} />
+      <Text style={{ color: active ? '#f97316' : '#7c2d12', fontSize: 12, fontWeight: '700', textAlign: 'center' }}>{label}</Text>
     </TouchableOpacity>
   )
 }
@@ -278,7 +255,7 @@ export default function TrackScreen() {
     refreshTrackingSnapshot()
     pollRef.current = setInterval(() => {
       refreshTrackingSnapshot()
-    }, 2000)
+    }, 5000)
 
     return () => {
       if (pollRef.current) {
@@ -438,7 +415,8 @@ export default function TrackScreen() {
   }, [currentLocation.latitude, currentLocation.longitude, shareLiveLocation])
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#000' }}>
+    <View style={{ flex: 1, backgroundColor: '#fff7f0' }}>
+      <LinearGradient colors={['#fffdf8', '#fff5ea', '#fff0e0']} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
       <View style={{ height: isRecording || isPaused ? '56%' : '46%' }}>
         <OSMMap
           center={currentLocation}
@@ -490,12 +468,12 @@ export default function TrackScreen() {
         )}
       </View>
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16, paddingBottom: 110 }}>
+      <ScrollView style={{ flex: 1, backgroundColor: '#fff7f0' }} contentContainerStyle={{ padding: 16, paddingBottom: 110 }}>
         <GlassCard style={{ marginBottom: 16 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <Text style={{ color: '#fff', fontSize: 18, fontWeight: '900' }}>Recording</Text>
-            <View style={{ borderRadius: 999, paddingHorizontal: 10, paddingVertical: 6, backgroundColor: isRecording ? 'rgba(34,197,94,0.15)' : isPaused ? 'rgba(250,204,21,0.15)' : 'rgba(255,255,255,0.06)' }}>
-              <Text style={{ color: isRecording ? '#22c55e' : isPaused ? '#facc15' : 'rgba(255,255,255,0.55)', fontSize: 11, fontWeight: '900', letterSpacing: 0.8, textTransform: 'uppercase' }}>
+            <Text style={{ color: '#111827', fontSize: 18, fontWeight: '900' }}>Recording</Text>
+            <View style={{ borderRadius: 999, paddingHorizontal: 10, paddingVertical: 6, backgroundColor: isRecording ? 'rgba(34,197,94,0.15)' : isPaused ? 'rgba(250,204,21,0.15)' : 'rgba(249,115,22,0.08)' }}>
+              <Text style={{ color: isRecording ? '#22c55e' : isPaused ? '#ca8a04' : '#9a3412', fontSize: 11, fontWeight: '900', letterSpacing: 0.8, textTransform: 'uppercase' }}>
                 {isRecording ? 'Live' : isPaused ? 'Paused' : 'Ready'}
               </Text>
             </View>
@@ -511,7 +489,7 @@ export default function TrackScreen() {
         </GlassCard>
 
         <GlassCard style={{ marginBottom: 16 }}>
-          <Text style={{ color: '#fff', fontSize: 15, fontWeight: '800', marginBottom: 12 }}>Activity</Text>
+          <Text style={{ color: '#111827', fontSize: 15, fontWeight: '800', marginBottom: 12 }}>Activity</Text>
           <View style={{ flexDirection: 'row', gap: 8 }}>
             {(['run', 'walk', 'cycle'] as const).map(type => (
               <TouchableOpacity
@@ -523,15 +501,15 @@ export default function TrackScreen() {
                   flex: 1,
                   paddingVertical: 12,
                   borderRadius: 18,
-                  backgroundColor: activityType === type ? '#f97316' : 'rgba(255,255,255,0.06)',
+                  backgroundColor: activityType === type ? '#f97316' : 'rgba(249,115,22,0.08)',
                   alignItems: 'center',
                   borderWidth: 1,
-                  borderColor: activityType === type ? '#fb923c' : 'rgba(255,255,255,0.1)',
+                  borderColor: activityType === type ? '#fb923c' : 'rgba(249,115,22,0.2)',
                   opacity: phase !== 'idle' && activityType !== type ? 0.55 : 1,
                 }}
               >
-                <Ionicons name={activityIcons[type]} size={20} color="#fff" />
-                <Text style={{ color: '#fff', fontSize: 12, fontWeight: '800', marginTop: 4, textTransform: 'capitalize' }}>{type}</Text>
+                <Ionicons name={activityIcons[type]} size={20} color={activityType === type ? '#fff' : '#f97316'} />
+                <Text style={{ color: activityType === type ? '#fff' : '#7c2d12', fontSize: 12, fontWeight: '800', marginTop: 4, textTransform: 'capitalize' }}>{type}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -570,47 +548,32 @@ export default function TrackScreen() {
         <GlassCard style={{ marginBottom: 20 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
             <View>
-              <Text style={{ color: '#fff', fontSize: 15, fontWeight: '800' }}>Session Tools</Text>
-              <Text style={{ color: 'rgba(255,255,255,0.45)', fontSize: 12, marginTop: 4 }}>Sharing, sensors, and map layers</Text>
+              <Text style={{ color: '#111827', fontSize: 15, fontWeight: '800' }}>Session Tools</Text>
+              <Text style={{ color: '#9a3412', fontSize: 12, marginTop: 4 }}>Sharing, sensors, and map layers</Text>
             </View>
             <TouchableOpacity onPress={() => setShowSettings(value => !value)} activeOpacity={0.82}>
-              <Ionicons name={showSettings ? 'chevron-up' : 'chevron-down'} size={20} color="#fff" />
+              <Ionicons name={showSettings ? 'chevron-up' : 'chevron-down'} size={20} color="#111827" />
             </TouchableOpacity>
           </View>
 
           <View style={{ flexDirection: 'row', gap: 10 }}>
             <ActionChip label="Share live location" icon="paper-plane-outline" active={shareLiveLocation} onPress={handleShareLiveLocation} />
-            <ActionChip
-              label="Add sensor"
-              icon="watch-outline"
-              onPress={() => Alert.alert('Sensors', 'External sensor pairing can slot in here next. The recording flow is ready for it.')}
-            />
+            <ActionChip label="Add sensor" icon="watch-outline" onPress={() => Alert.alert('Sensors', 'External sensor pairing can slot in here next. The recording flow is ready for it.')} />
             <ActionChip label="Settings" icon="options-outline" active={showSettings} onPress={() => setShowSettings(value => !value)} />
           </View>
 
           {showSettings && (
             <View style={{ marginTop: 16, gap: 14 }}>
               <View>
-                <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, fontWeight: '800', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.8 }}>
-                  Map type
-                </Text>
+                <Text style={{ color: '#9a3412', fontSize: 11, fontWeight: '800', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.8 }}>Map type</Text>
                 <View style={{ flexDirection: 'row', gap: 8 }}>
                   {(['standard', 'satellite', 'hybrid'] as const).map(type => (
                     <TouchableOpacity
                       key={type}
                       onPress={() => setMapType(type)}
                       activeOpacity={0.82}
-                      style={{
-                        flex: 1,
-                        borderRadius: 16,
-                        paddingVertical: 12,
-                        alignItems: 'center',
-                        backgroundColor: mapType === type ? '#f97316' : 'rgba(255,255,255,0.05)',
-                        borderWidth: 1,
-                        borderColor: mapType === type ? '#fb923c' : 'rgba(255,255,255,0.08)',
-                      }}
-                    >
-                      <Text style={{ color: '#fff', fontSize: 12, fontWeight: '800', textTransform: 'capitalize' }}>{type}</Text>
+                      style={{ flex: 1, borderRadius: 16, paddingVertical: 12, alignItems: 'center', backgroundColor: mapType === type ? '#f97316' : 'rgba(249,115,22,0.08)', borderWidth: 1, borderColor: mapType === type ? '#fb923c' : 'rgba(249,115,22,0.2)' }}>
+                      <Text style={{ color: mapType === type ? '#fff' : '#7c2d12', fontSize: 12, fontWeight: '800', textTransform: 'capitalize' }}>{type}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -619,25 +582,12 @@ export default function TrackScreen() {
               <TouchableOpacity
                 onPress={() => setShowPointsOfInterest(value => !value)}
                 activeOpacity={0.82}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  borderRadius: 18,
-                  paddingHorizontal: 14,
-                  paddingVertical: 14,
-                  backgroundColor: 'rgba(255,255,255,0.05)',
-                  borderWidth: 1,
-                  borderColor: 'rgba(255,255,255,0.08)',
-                }}
-              >
+                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderRadius: 18, paddingHorizontal: 14, paddingVertical: 14, backgroundColor: 'rgba(249,115,22,0.08)', borderWidth: 1, borderColor: 'rgba(249,115,22,0.15)' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                  <Ionicons name="business-outline" size={18} color="#fff" />
+                  <Ionicons name="business-outline" size={18} color="#f97316" />
                   <View>
-                    <Text style={{ color: '#fff', fontSize: 14, fontWeight: '700' }}>Points of Interest</Text>
-                    <Text style={{ color: 'rgba(255,255,255,0.45)', fontSize: 12, marginTop: 2 }}>
-                      {showPointsOfInterest ? 'Labels and places visible' : 'Cleaner route-first map'}
-                    </Text>
+                    <Text style={{ color: '#111827', fontSize: 14, fontWeight: '700' }}>Points of Interest</Text>
+                    <Text style={{ color: '#9a3412', fontSize: 12, marginTop: 2 }}>{showPointsOfInterest ? 'Labels and places visible' : 'Cleaner route-first map'}</Text>
                   </View>
                 </View>
                 <Ionicons name={showPointsOfInterest ? 'toggle' : 'toggle-outline'} size={34} color={showPointsOfInterest ? '#f97316' : 'rgba(255,255,255,0.35)'} />
@@ -646,29 +596,29 @@ export default function TrackScreen() {
           )}
         </GlassCard>
 
-        <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800', marginBottom: 12 }}>Recent Routes</Text>
+        <Text style={{ color: '#111827', fontSize: 16, fontWeight: '900', marginBottom: 12 }}>Recent Routes</Text>
 
         {loadingRoutes ? (
           <ActivityIndicator color="#f97316" />
         ) : routes.length === 0 ? (
           <GlassCard>
-            <Text style={{ color: 'rgba(255,255,255,0.45)', textAlign: 'center', fontSize: 14 }}>No routes yet. Start your first session.</Text>
+            <Text style={{ color: '#9a3412', textAlign: 'center', fontSize: 14 }}>No routes yet. Start your first session.</Text>
           </GlassCard>
         ) : (
           routes.map(route => (
             <TouchableOpacity key={route.id} onPress={() => openSavedRoute(route)} activeOpacity={0.84}>
-              <BlurView intensity={18} tint="dark" style={{ borderRadius: 18, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', marginBottom: 10 }}>
-                <View style={{ backgroundColor: 'rgba(255,255,255,0.05)', padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(249,115,22,0.15)', alignItems: 'center', justifyContent: 'center' }}>
+              <BlurView intensity={45} tint="light" style={{ borderRadius: 22, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.78)', marginBottom: 10 }}>
+                <View style={{ backgroundColor: 'rgba(255,255,255,0.58)', padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                  <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(249,115,22,0.15)', alignItems: 'center', justifyContent: 'center' }}>
                     <Ionicons name={activityIcons[route.activity_type]} size={20} color="#f97316" />
                   </View>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ color: '#fff', fontWeight: '800', fontSize: 15, textTransform: 'capitalize' }}>{route.activity_type}</Text>
-                    <Text style={{ color: 'rgba(255,255,255,0.42)', fontSize: 12, marginTop: 2 }}>
+                    <Text style={{ color: '#111827', fontWeight: '800', fontSize: 15, textTransform: 'capitalize' }}>{route.activity_type}</Text>
+                    <Text style={{ color: '#9a3412', fontSize: 12, marginTop: 2 }}>
                       {route.distance_km.toFixed(2)} km · {formatDuration(route.duration_seconds)} · {route.distance_km > 0 ? `${(route.duration_seconds / 60 / route.distance_km).toFixed(1)} min/km` : 'pace pending'}
                     </Text>
                   </View>
-                  <Text style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11 }}>
+                  <Text style={{ color: '#9a3412', fontSize: 11, fontWeight: '700' }}>
                     {new Date(route.started_at).toLocaleDateString()}
                   </Text>
                 </View>

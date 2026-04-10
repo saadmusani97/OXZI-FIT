@@ -42,7 +42,10 @@ export default function ExercisesScreen() {
   const { data: exercises, isLoading, error } = useFilteredExercises(query, muscle)
 
   const fetchRecentWorkouts = useCallback(async () => {
-    if (!session?.user?.id) return
+    if (!session?.user?.id) {
+      setRecentWorkouts([])
+      return
+    }
     const { data } = await supabase
       .from('workouts')
       .select('id, exercise_name, sets, reps, weight_kg, completed_at')
@@ -52,49 +55,63 @@ export default function ExercisesScreen() {
     setRecentWorkouts((data as RecentWorkout[]) ?? [])
   }, [session?.user?.id])
 
-  useEffect(() => { fetchRecentWorkouts() }, [fetchRecentWorkouts])
+  useEffect(() => {
+    if (tab !== 'history') return
+    void fetchRecentWorkouts()
+  }, [fetchRecentWorkouts, tab])
 
   return (
-    <View style={{ flex: 1 }}>
-      <LinearGradient colors={['#0a0a0f', '#0f0a1a', '#0a0f0a']} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
+    <View style={{ flex: 1, backgroundColor: '#fff7f0' }}>
+      <LinearGradient colors={['#fffdf8', '#fff5ea', '#fff0e0']} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
+      <View style={{ position: 'absolute', top: -70, right: -20, width: 220, height: 220, borderRadius: 110, backgroundColor: 'rgba(249,115,22,0.12)' }} />
+      <View style={{ position: 'absolute', top: 280, left: -70, width: 240, height: 240, borderRadius: 120, backgroundColor: 'rgba(251,146,60,0.08)' }} />
 
       <SafeAreaView style={{ flex: 1 }}>
         <View style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-            <Text style={{ color: '#fff', fontSize: 26, fontWeight: '800' }}>Exercises</Text>
-            <Ionicons name="barbell-outline" size={22} color="#f97316" />
+          <View style={{ marginBottom: 18, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: '#7c2d12', fontSize: 12, fontWeight: '800', letterSpacing: 1.2, textTransform: 'uppercase' }}>Exercise Library</Text>
+              <Text style={{ color: '#111827', fontSize: 32, fontWeight: '900', marginTop: 6 }}>Exercises</Text>
+            </View>
+            <BlurView intensity={40} tint="light" style={{ borderRadius: 18, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.75)' }}>
+              <View style={{ width: 38, height: 38, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.45)' }}>
+                <Ionicons name="barbell-outline" size={18} color="#f97316" />
+              </View>
+            </BlurView>
           </View>
 
-          <View style={{ flexDirection: 'row', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 16, padding: 4, marginBottom: 16 }}>
-            {(['browse', 'history'] as const).map(t => (
-              <TouchableOpacity key={t} onPress={() => setTab(t)} style={{ flex: 1, paddingVertical: 10, borderRadius: 12, backgroundColor: tab === t ? '#f97316' : 'transparent', alignItems: 'center' }} activeOpacity={0.8}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <Ionicons name={t === 'browse' ? 'search-outline' : 'list-outline'} size={14} color={tab === t ? '#fff' : 'rgba(255,255,255,0.5)'} />
-                  <Text style={{ color: tab === t ? '#fff' : 'rgba(255,255,255,0.5)', fontWeight: '700', fontSize: 14, textTransform: 'capitalize' }}>{t === 'browse' ? 'Browse' : 'History'}</Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
+          <BlurView intensity={45} tint="light" style={{ borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.78)', marginBottom: 14 }}>
+            <View style={{ backgroundColor: 'rgba(255,255,255,0.58)', flexDirection: 'row', padding: 4 }}>
+              {(['browse', 'history'] as const).map(t => (
+                <TouchableOpacity key={t} onPress={() => setTab(t)} style={{ flex: 1, paddingVertical: 10, borderRadius: 14, backgroundColor: tab === t ? '#f97316' : 'transparent', alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 6 }} activeOpacity={0.8}>
+                  <Ionicons name={t === 'browse' ? 'search-outline' : 'list-outline'} size={14} color={tab === t ? '#fff' : '#9a3412'} />
+                  <Text style={{ color: tab === t ? '#fff' : '#9a3412', fontWeight: '800', fontSize: 13 }}>{t === 'browse' ? 'Browse' : 'History'}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </BlurView>
 
           {tab === 'browse' && (
             <>
-              <View style={{ backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 16, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, marginBottom: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
-                <Ionicons name="search-outline" size={18} color="rgba(255,255,255,0.4)" />
-                <TextInput
-                  style={{ flex: 1, color: '#fff', paddingVertical: 12, paddingHorizontal: 10, fontSize: 15 }}
-                  placeholder="Search exercises..."
-                  placeholderTextColor="rgba(255,255,255,0.3)"
-                  value={query}
-                  onChangeText={setQuery}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-                {query.length > 0 && (
-                  <TouchableOpacity onPress={() => setQuery('')}>
-                    <Ionicons name="close-circle" size={18} color="rgba(255,255,255,0.4)" />
-                  </TouchableOpacity>
-                )}
-              </View>
+              <BlurView intensity={45} tint="light" style={{ borderRadius: 18, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.78)', marginBottom: 12 }}>
+                <View style={{ backgroundColor: 'rgba(255,255,255,0.58)', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14 }}>
+                  <Ionicons name="search-outline" size={18} color="#9a3412" />
+                  <TextInput
+                    style={{ flex: 1, color: '#111827', paddingVertical: 12, paddingHorizontal: 10, fontSize: 15 }}
+                    placeholder="Search exercises..."
+                    placeholderTextColor="#9a3412"
+                    value={query}
+                    onChangeText={setQuery}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                  />
+                  {query.length > 0 && (
+                    <TouchableOpacity onPress={() => setQuery('')}>
+                      <Ionicons name="close-circle" size={18} color="#9a3412" />
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </BlurView>
 
               <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 8 }}>
                 <View style={{ flexDirection: 'row', gap: 8 }}>
@@ -104,10 +121,10 @@ export default function ExercisesScreen() {
                       <TouchableOpacity
                         key={part.value}
                         onPress={() => setSelectedPart(part.value === 'all' ? undefined : part.value)}
-                        style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, backgroundColor: isActive ? '#f97316' : 'rgba(255,255,255,0.08)', borderWidth: 1, borderColor: isActive ? '#f97316' : 'rgba(255,255,255,0.1)' }}
+                        style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, backgroundColor: isActive ? '#f97316' : 'rgba(255,255,255,0.6)', borderWidth: 1, borderColor: isActive ? '#f97316' : 'rgba(249,115,22,0.2)' }}
                         activeOpacity={0.8}
                       >
-                        <Text style={{ color: isActive ? '#fff' : 'rgba(255,255,255,0.6)', fontSize: 13, fontWeight: '600' }}>{part.label}</Text>
+                        <Text style={{ color: isActive ? '#fff' : '#7c2d12', fontSize: 13, fontWeight: '700' }}>{part.label}</Text>
                       </TouchableOpacity>
                     )
                   })}
@@ -121,13 +138,13 @@ export default function ExercisesScreen() {
           isLoading ? (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
               <ActivityIndicator color="#f97316" size="large" />
-              <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14 }}>Loading 1500+ exercises...</Text>
+              <Text style={{ color: '#9a3412', fontSize: 14 }}>Loading 1500+ exercises...</Text>
             </View>
           ) : error ? (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, paddingHorizontal: 40 }}>
-              <Ionicons name="wifi-outline" size={48} color="rgba(255,255,255,0.2)" />
-              <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 16, textAlign: 'center' }}>Failed to load exercises</Text>
-              <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: 13, textAlign: 'center' }}>Check your internet connection and try again</Text>
+              <Ionicons name="wifi-outline" size={48} color="rgba(249,115,22,0.3)" />
+              <Text style={{ color: '#111827', fontSize: 16, textAlign: 'center', fontWeight: '700' }}>Failed to load exercises</Text>
+              <Text style={{ color: '#9a3412', fontSize: 13, textAlign: 'center' }}>Check your internet connection and try again</Text>
             </View>
           ) : (
             <FlatList
@@ -140,14 +157,14 @@ export default function ExercisesScreen() {
               showsVerticalScrollIndicator={false}
               ListEmptyComponent={
                 <View style={{ alignItems: 'center', justifyContent: 'center', paddingTop: 80, gap: 12 }}>
-                  <Ionicons name="search-outline" size={48} color="rgba(255,255,255,0.2)" />
-                  <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 16 }}>No exercises found</Text>
-                  <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: 13 }}>Try a different search or filter</Text>
+                  <Ionicons name="search-outline" size={48} color="rgba(249,115,22,0.3)" />
+                  <Text style={{ color: '#111827', fontSize: 16, fontWeight: '700' }}>No exercises found</Text>
+                  <Text style={{ color: '#9a3412', fontSize: 13 }}>Try a different search or filter</Text>
                 </View>
               }
               ListHeaderComponent={
                 exercises.length > 0 ? (
-                  <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, marginBottom: 12 }}>{exercises.length} exercises found</Text>
+                  <Text style={{ color: '#9a3412', fontSize: 12, fontWeight: '700', marginBottom: 12 }}>{exercises.length} exercises found</Text>
                 ) : null
               }
             />
@@ -160,27 +177,27 @@ export default function ExercisesScreen() {
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={
               <View style={{ alignItems: 'center', justifyContent: 'center', paddingTop: 80, gap: 12 }}>
-                <Ionicons name="barbell-outline" size={48} color="rgba(255,255,255,0.2)" />
-                <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 16 }}>No workouts logged yet</Text>
-                <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: 13 }}>Browse exercises and log your first workout</Text>
+                <Ionicons name="barbell-outline" size={48} color="rgba(249,115,22,0.3)" />
+                <Text style={{ color: '#111827', fontSize: 16, fontWeight: '700' }}>No workouts logged yet</Text>
+                <Text style={{ color: '#9a3412', fontSize: 13 }}>Browse exercises and log your first workout</Text>
                 <TouchableOpacity onPress={() => setTab('browse')} style={{ backgroundColor: '#f97316', borderRadius: 14, paddingHorizontal: 20, paddingVertical: 10, marginTop: 8 }}>
-                  <Text style={{ color: '#fff', fontWeight: '700' }}>Browse Exercises</Text>
+                  <Text style={{ color: '#fff', fontWeight: '800' }}>Browse Exercises</Text>
                 </TouchableOpacity>
               </View>
             }
             renderItem={({ item }) => (
-              <BlurView intensity={15} tint="dark" style={{ borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', marginBottom: 10 }}>
-                <View style={{ backgroundColor: 'rgba(255,255,255,0.05)', padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <BlurView intensity={45} tint="light" style={{ borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.78)', marginBottom: 10 }}>
+                <View style={{ backgroundColor: 'rgba(255,255,255,0.58)', padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                   <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(249,115,22,0.15)', alignItems: 'center', justifyContent: 'center' }}>
                     <Ionicons name="barbell-outline" size={20} color="#f97316" />
                   </View>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15, textTransform: 'capitalize' }}>{item.exercise_name}</Text>
-                    <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, marginTop: 2 }}>
+                    <Text style={{ color: '#111827', fontWeight: '800', fontSize: 15, textTransform: 'capitalize' }}>{item.exercise_name}</Text>
+                    <Text style={{ color: '#9a3412', fontSize: 12, marginTop: 2 }}>
                       {item.sets} sets × {item.reps} reps{item.weight_kg ? ` · ${item.weight_kg}kg` : ''}
                     </Text>
                   </View>
-                  <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: 11 }}>
+                  <Text style={{ color: '#9a3412', fontSize: 11, fontWeight: '700' }}>
                     {new Date(item.completed_at).toLocaleDateString()}
                   </Text>
                 </View>

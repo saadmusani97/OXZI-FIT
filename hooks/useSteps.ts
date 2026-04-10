@@ -1,34 +1,24 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { AppState, type AppStateStatus } from 'react-native'
 import { Pedometer } from 'expo-sensors'
 import { useStepStore } from '../stores/stepStore'
 import { useAuthStore } from '../stores/authStore'
-import { calculateStepDistance, calculateStepCalories } from '../lib/utils'
+import { calculateStepCalories, calculateStepDistance } from '../lib/utils'
 import { supabase } from '../lib/supabase'
 
 export type StepStatus = 'loading' | 'unavailable' | 'denied' | 'active'
 
-const LIVE_STEP_CONFIRMATION_COUNT = 3
-const MIN_LIVE_STEPS_PER_MINUTE = 40
-const MAX_LIVE_STEPS_PER_MINUTE = 220
-const STEP_SYNC_INTERVAL_MS = 15000
-const STEP_SAVE_INTERVAL_MS = 30000
+const STEP_SYNC_INTERVAL_MS = 300000
+const STEP_SAVE_INTERVAL_MS = 300000
 
 let runtimeStatus: StepStatus = 'loading'
-let liveSteps = 0
-let watchStepCount = 0 as number | null
-let watchStepCountAt = 0
-let lastSyncAt = 0
 let syncInFlight: Promise<number | null> | null = null
-let lastSavedAt = 0
-let lastSavedSteps: number | null = null
-let liveStepHandling = false
-let pendingLiveSteps: number | null = null
-let pedometerSubscription: { remove: () => void } | null = null
-let syncInterval: ReturnType<typeof setInterval> | null = null
+let pollInterval: ReturnType<typeof setInterval> | null = null
 let appStateSubscription: { remove: () => void } | null = null
 let runtimeStarted = false
 let runtimeStartPromise: Promise<void> | null = null
+let lastSavedAt = 0
+let lastSavedSteps: number | null = null
 const listeners = new Set<() => void>()
 
 function notifyListeners() {
@@ -40,28 +30,21 @@ function setRuntimeStatus(status: StepStatus) {
   notifyListeners()
 }
 
-function getDailyGoal() {
-  return useAuthStore.getState().profile?.daily_step_goal ?? 10000
-}
-
 function getUserId() {
   return useAuthStore.getState().session?.user?.id ?? null
 }
 
+function getDailyGoal() {
+  return useAuthStore.getState().profile?.daily_step_goal ?? 10000
+}
+
 function commitSteps(steps: number) {
   const normalizedSteps = Math.max(0, Math.floor(steps))
-  liveSteps = normalizedSteps
   const { setSteps, setGoalReached } = useStepStore.getState()
   setSteps(normalizedSteps)
   setGoalReached(normalizedSteps >= getDailyGoal())
   notifyListeners()
   return normalizedSteps
-}
-
-function isReasonableStepCadence(stepDelta: number, elapsedMs: number) {
-  if (stepDelta <= 0 || elapsedMs <= 0) return false
-  const stepsPerMinute = stepDelta / (elapsedMs / 60000)
-  return stepsPerMinute >= MIN_LIVE_STEPS_PER_MINUTE && stepsPerMinute <= MAX_LIVE_STEPS_PER_MINUTE
 }
 
 async function saveSteps(steps: number, force = false) {
@@ -94,31 +77,6 @@ async function saveSteps(steps: number, force = false) {
   return true
 }
 
-async function syncTodaySteps(forceSave = true): Promise<number | null> {
-  if (syncInFlight) {
-    return syncInFlight
-  }
-
-  syncInFlight = (async () => {
-    const now = new Date()
-    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)
-    try {
-      const { steps } = await Pedometer.getStepCountAsync(startOfDay, now)
-      lastSyncAt = Date.now()
-      const committedSteps = commitSteps(steps)
-      await saveSteps(committedSteps, forceSave)
-      return committedSteps
-    } catch (error) {
-      console.warn('Step fetch error:', error)
-      return null
-    } finally {
-      syncInFlight = null
-    }
-  })()
-
-  return syncInFlight
-}
-
 async function loadSavedSteps() {
   const userId = getUserId()
   if (!userId) return null
@@ -140,129 +98,81 @@ async function loadSavedSteps() {
   return commitSteps(data.steps)
 }
 
+async function syncTodaySteps(forceSave = false): Promise<number | null> {
+  if (syncInFlight) return syncInFlight
+
+  syncInFlight = (async () => {
+    const now = new Date()
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)
+
+    try {
+      const { steps } = await Pedometer.getStepCountAsync(startOfDay, now)
+      const committedSteps = commitSteps(steps)
+      await saveSteps(committedSteps, forceSave)
+      return committedSteps
+    } catch (error) {
+      console.warn('Step fetch error:', error)
+      return null
+    } finally {
+      syncInFlight = null
+    }
+  })()
+
+  return syncInFlight
+}
+
 async function ensurePermissionsAndSync() {
   setRuntimeStatus('loading')
 
-  const { granted } = await Pedometer.requestPermissionsAsync()
-  if (!granted) {
-    setRuntimeStatus('denied')
-    return false
-  }
+  try {
+    const available = await Pedometer.isAvailableAsync()
+    if (!available) {
+      setRuntimeStatus('unavailable')
+      return false
+    }
 
-  const available = await Pedometer.isAvailableAsync()
-  if (!available) {
+    const { granted } = await Pedometer.requestPermissionsAsync()
+    if (!granted) {
+      setRuntimeStatus('denied')
+      const savedSteps = await loadSavedSteps()
+      if (savedSteps === null) {
+        commitSteps(0)
+      }
+      return false
+    }
+
+    setRuntimeStatus('active')
+    const steps = await syncTodaySteps(true)
+    if (steps === null) {
+      const savedSteps = await loadSavedSteps()
+      if (savedSteps === null) {
+        commitSteps(0)
+      }
+    }
+    return true
+  } catch (error) {
+    console.warn('Step permission error:', error)
     setRuntimeStatus('unavailable')
-    return false
-  }
-
-  setRuntimeStatus('active')
-  const steps = await syncTodaySteps()
-  if (steps === null) {
     const savedSteps = await loadSavedSteps()
     if (savedSteps === null) {
-      commitSteps(liveSteps)
+      commitSteps(0)
     }
-  }
-  return true
-}
-
-async function processLiveStepCount(steps: number) {
-  const rawSteps = Math.max(0, Math.floor(steps))
-  const now = Date.now()
-
-  if (watchStepCount === null || rawSteps <= watchStepCount) {
-    watchStepCount = rawSteps
-    watchStepCountAt = now
-    return
-  }
-
-  const stepDelta = rawSteps - watchStepCount
-  const elapsedMs = now - watchStepCountAt
-
-  if (stepDelta < LIVE_STEP_CONFIRMATION_COUNT) {
-    if (elapsedMs >= (LIVE_STEP_CONFIRMATION_COUNT / MIN_LIVE_STEPS_PER_MINUTE) * 60000) {
-      watchStepCount = rawSteps
-      watchStepCountAt = now
-    }
-    return
-  }
-
-  if (!isReasonableStepCadence(stepDelta, elapsedMs)) {
-    watchStepCount = rawSteps
-    watchStepCountAt = now
-    return
-  }
-
-  const nextSteps = commitSteps(liveSteps + stepDelta)
-  watchStepCount = rawSteps
-  watchStepCountAt = now
-  await saveSteps(nextSteps)
-
-  if (now - lastSyncAt >= STEP_SYNC_INTERVAL_MS) {
-    await syncTodaySteps(false)
+    return false
   }
 }
 
-async function handleLiveStepCount(steps: number) {
-  pendingLiveSteps = steps
-  if (liveStepHandling) return
-
-  liveStepHandling = true
-  try {
-    while (pendingLiveSteps !== null) {
-      const nextSteps = pendingLiveSteps
-      pendingLiveSteps = null
-      await processLiveStepCount(nextSteps)
-    }
-  } finally {
-    liveStepHandling = false
+function stopPolling() {
+  if (pollInterval) {
+    clearInterval(pollInterval)
+    pollInterval = null
   }
 }
 
-function resetLiveWatcherState() {
-  watchStepCount = null
-  watchStepCountAt = 0
-}
+function startPolling() {
+  if (pollInterval || runtimeStatus !== 'active') return
 
-function stopLiveTracking() {
-  pedometerSubscription?.remove()
-  pedometerSubscription = null
-  if (syncInterval) {
-    clearInterval(syncInterval)
-    syncInterval = null
-  }
-}
-
-export function resetStepRuntime() {
-  stopLiveTracking()
-  appStateSubscription?.remove()
-  appStateSubscription = null
-  runtimeStarted = false
-  runtimeStartPromise = null
-  liveSteps = 0
-  watchStepCount = null
-  watchStepCountAt = 0
-  lastSyncAt = 0
-  lastSavedAt = 0
-  lastSavedSteps = null
-  syncInFlight = null
-  liveStepHandling = false
-  pendingLiveSteps = null
-  runtimeStatus = 'loading'
-  useStepStore.getState().setSteps(0)
-  useStepStore.getState().setGoalReached(false)
-  notifyListeners()
-}
-
-function startLiveTracking() {
-  if (pedometerSubscription || runtimeStatus !== 'active') return
-
-  resetLiveWatcherState()
-  pedometerSubscription = Pedometer.watchStepCount(result => {
-    void handleLiveStepCount(result.steps)
-  })
-  syncInterval = setInterval(() => {
-    void syncTodaySteps(false)
+  pollInterval = setInterval(() => {
+    void syncTodaySteps()
   }, STEP_SYNC_INTERVAL_MS)
 }
 
@@ -271,7 +181,9 @@ async function handleAppStateChange(nextState: AppStateStatus) {
 
   const isReady = await ensurePermissionsAndSync()
   if (isReady) {
-    startLiveTracking()
+    startPolling()
+  } else {
+    stopPolling()
   }
 }
 
@@ -285,9 +197,7 @@ async function ensureRuntimeStarted() {
     return
   }
 
-  if (runtimeStartPromise) {
-    return runtimeStartPromise
-  }
+  if (runtimeStartPromise) return runtimeStartPromise
 
   runtimeStartPromise = (async () => {
     if (!appStateSubscription) {
@@ -298,9 +208,9 @@ async function ensureRuntimeStarted() {
 
     const isReady = await ensurePermissionsAndSync()
     if (isReady) {
-      startLiveTracking()
+      startPolling()
     } else {
-      stopLiveTracking()
+      stopPolling()
     }
 
     runtimeStarted = true
@@ -315,6 +225,21 @@ function subscribe(listener: () => void) {
   return () => {
     listeners.delete(listener)
   }
+}
+
+export function resetStepRuntime() {
+  stopPolling()
+  appStateSubscription?.remove()
+  appStateSubscription = null
+  runtimeStarted = false
+  runtimeStartPromise = null
+  syncInFlight = null
+  lastSavedAt = 0
+  lastSavedSteps = null
+  runtimeStatus = 'loading'
+  useStepStore.getState().setSteps(0)
+  useStepStore.getState().setGoalReached(false)
+  notifyListeners()
 }
 
 export function useSteps() {
@@ -343,7 +268,7 @@ export function useSteps() {
   const refresh = useCallback(async () => {
     const isReady = await ensurePermissionsAndSync()
     if (isReady) {
-      startLiveTracking()
+      startPolling()
     }
     return isReady
   }, [])

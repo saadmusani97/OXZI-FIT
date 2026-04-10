@@ -17,6 +17,7 @@ interface LeaderboardRow {
   workout_points: number
   meal_points: number
   route_points: number
+  streak_points: number
 }
 
 interface PublicProfile {
@@ -125,7 +126,7 @@ export default function LeaderboardScreen() {
     const [leaderboardRes, friendshipsRes] = await Promise.all([
       supabase
         .from('leaderboard_entries')
-        .select('user_id, total_points, step_points, workout_points, meal_points, route_points')
+        .select('user_id, total_points, step_points, workout_points, meal_points, route_points, streak_points')
         .eq('month', currentMonth)
         .order('total_points', { ascending: false })
         .limit(50),
@@ -221,6 +222,23 @@ export default function LeaderboardScreen() {
             </View>
           </GlassPanel>
 
+          <GlassPanel style={{ marginBottom: 18 }}>
+            <Text style={{ color: '#111827', fontSize: 16, fontWeight: '900', marginBottom: 12 }}>How Ranking Works</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+              {[
+                '1 pt / 1,000 steps',
+                '10 pts / workout',
+                '5 pts / meal logged',
+                '1 pt / km tracked',
+                '5 pts / streak day',
+              ].map(rule => (
+                <View key={rule} style={{ borderRadius: 999, paddingHorizontal: 12, paddingVertical: 8, backgroundColor: 'rgba(249,115,22,0.12)' }}>
+                  <Text style={{ color: '#9a3412', fontSize: 12, fontWeight: '800' }}>{rule}</Text>
+                </View>
+              ))}
+            </View>
+          </GlassPanel>
+
           {loading ? (
             <ActivityIndicator color="#f97316" size="large" style={{ marginTop: 80 }} />
           ) : entries.length === 0 ? (
@@ -287,7 +305,7 @@ export default function LeaderboardScreen() {
                             {isMe ? <Text style={{ color: '#f97316', fontSize: 11, fontWeight: '800' }}>YOU</Text> : null}
                           </View>
                           <Text style={{ color: '#9a3412', fontSize: 12, marginTop: 4 }}>
-                            Steps {entry.step_points} · Workouts {entry.workout_points} · Meals {entry.meal_points} · Routes {entry.route_points}
+                            Steps {entry.step_points} · Workouts {entry.workout_points} · Meals {entry.meal_points} · Routes {entry.route_points} · Streak {entry.streak_points}
                           </Text>
                         </View>
                         <View style={{ alignItems: 'flex-end' }}>
@@ -304,12 +322,15 @@ export default function LeaderboardScreen() {
                 <GlassPanel style={{ marginTop: 18 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                     <LiquidIcon icon="person-outline" />
-                    <View style={{ flex: 1 }}>
-                      <Text style={{ color: '#111827', fontSize: 15, fontWeight: '900' }}>Your standing</Text>
-                      <Text style={{ color: '#9a3412', fontSize: 13, marginTop: 2 }}>Rank #{myRank} in the current view</Text>
-                    </View>
-                    <Text style={{ color: '#f97316', fontSize: 18, fontWeight: '900' }}>{myEntry.total_points}</Text>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: '#111827', fontSize: 15, fontWeight: '900' }}>Your standing</Text>
+                    <Text style={{ color: '#9a3412', fontSize: 13, marginTop: 2 }}>Rank #{myRank} in the current view</Text>
+                    <Text style={{ color: '#9a3412', fontSize: 12, marginTop: 4 }}>
+                      Steps {myEntry.step_points} · Workouts {myEntry.workout_points} · Meals {myEntry.meal_points} · Routes {myEntry.route_points} · Streak {myEntry.streak_points}
+                    </Text>
                   </View>
+                  <Text style={{ color: '#f97316', fontSize: 18, fontWeight: '900' }}>{myEntry.total_points}</Text>
+                </View>
                 </GlassPanel>
               ) : null}
             </>

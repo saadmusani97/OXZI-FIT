@@ -55,6 +55,7 @@ export default function RootLayout() {
           })
       } else {
         clearAuth()
+        setHydrated(true)
         resetStepRuntime()
       }
     })

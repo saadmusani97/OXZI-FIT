@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { View, Image, ActivityIndicator, Text } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
 
 interface ExerciseAnimationProps {
   gifUrl: string
@@ -15,7 +16,7 @@ export default function ExerciseAnimation({ gifUrl, size = 300 }: ExerciseAnimat
       {!loaded && !error && <ActivityIndicator color="#f97316" size="large" />}
       {error ? (
         <View style={{ alignItems: 'center', gap: 8 }}>
-          <Text style={{ fontSize: 48 }}>🏋️</Text>
+          <Ionicons name="barbell-outline" size={48} color="rgba(255,255,255,0.4)" />
           <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12 }}>No image available</Text>
         </View>
       ) : (

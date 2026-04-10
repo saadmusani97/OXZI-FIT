@@ -488,7 +488,10 @@ export default function CaloriesScreen() {
 
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 16, marginBottom: 24 }}>
             <View>
-              <Text style={{ color: '#fff', fontSize: 26, fontWeight: '800' }}>Cal AI 📷</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <Text style={{ color: '#fff', fontSize: 26, fontWeight: '800' }}>Cal AI</Text>
+              <Ionicons name="camera-outline" size={22} color="#f97316" />
+            </View>
               <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, marginTop: 2 }}>Scan your food for instant nutrition</Text>
             </View>
           </View>
@@ -551,7 +554,7 @@ export default function CaloriesScreen() {
             <BlurView intensity={15} tint="dark" style={{ borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' }}>
               <View style={{ backgroundColor: 'rgba(255,255,255,0.04)', padding: 32, alignItems: 'center', gap: 10 }}>
                 <Ionicons name="restaurant-outline" size={36} color="rgba(255,255,255,0.2)" />
-                <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, textAlign: 'center' }}>No meals logged today{'\n'}Scan your first meal 🍽️</Text>
+                <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, textAlign: 'center' }}>No meals logged today{'\n'}Scan your first meal</Text>
               </View>
             </BlurView>
           ) : (

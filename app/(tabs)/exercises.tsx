@@ -12,13 +12,13 @@ import { useAuthStore } from '../../stores/authStore'
 
 const BODY_PARTS = [
   { label: 'All', value: 'all' },
-  { label: '💪 Arms', value: 'upper arms' },
-  { label: '🏋️ Chest', value: 'chest' },
-  { label: '🔙 Back', value: 'back' },
-  { label: '🦵 Legs', value: 'upper legs' },
-  { label: '🔺 Shoulders', value: 'shoulders' },
-  { label: '🎯 Core', value: 'waist' },
-  { label: '🦵 Calves', value: 'lower legs' },
+  { label: 'Arms', value: 'upper arms' },
+  { label: 'Chest', value: 'chest' },
+  { label: 'Back', value: 'back' },
+  { label: 'Legs', value: 'upper legs' },
+  { label: 'Shoulders', value: 'shoulders' },
+  { label: 'Core', value: 'waist' },
+  { label: 'Calves', value: 'lower legs' },
 ]
 
 interface RecentWorkout {
@@ -60,12 +60,18 @@ export default function ExercisesScreen() {
 
       <SafeAreaView style={{ flex: 1 }}>
         <View style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8 }}>
-          <Text style={{ color: '#fff', fontSize: 26, fontWeight: '800', marginBottom: 16 }}>Exercises 🏋️</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+            <Text style={{ color: '#fff', fontSize: 26, fontWeight: '800' }}>Exercises</Text>
+            <Ionicons name="barbell-outline" size={22} color="#f97316" />
+          </View>
 
           <View style={{ flexDirection: 'row', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 16, padding: 4, marginBottom: 16 }}>
             {(['browse', 'history'] as const).map(t => (
               <TouchableOpacity key={t} onPress={() => setTab(t)} style={{ flex: 1, paddingVertical: 10, borderRadius: 12, backgroundColor: tab === t ? '#f97316' : 'transparent', alignItems: 'center' }} activeOpacity={0.8}>
-                <Text style={{ color: tab === t ? '#fff' : 'rgba(255,255,255,0.5)', fontWeight: '700', fontSize: 14, textTransform: 'capitalize' }}>{t === 'browse' ? '🔍 Browse' : '📋 History'}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Ionicons name={t === 'browse' ? 'search-outline' : 'list-outline'} size={14} color={tab === t ? '#fff' : 'rgba(255,255,255,0.5)'} />
+                  <Text style={{ color: tab === t ? '#fff' : 'rgba(255,255,255,0.5)', fontWeight: '700', fontSize: 14, textTransform: 'capitalize' }}>{t === 'browse' ? 'Browse' : 'History'}</Text>
+                </View>
               </TouchableOpacity>
             ))}
           </View>

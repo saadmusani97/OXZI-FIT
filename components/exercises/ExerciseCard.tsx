@@ -1,4 +1,5 @@
 import { TouchableOpacity, View, Text, Image } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
 import { ExerciseDBItem } from '../../lib/exerciseDb'
 
 interface ExerciseCardProps {
@@ -17,7 +18,7 @@ export default function ExerciseCard({ exercise, onPress }: ExerciseCardProps) {
         {exercise.gifUrl ? (
           <Image source={{ uri: exercise.gifUrl }} style={{ width: 56, height: 56 }} resizeMode="cover" />
         ) : (
-          <Text style={{ fontSize: 24 }}>🏋️</Text>
+          <Ionicons name="barbell-outline" size={28} color="#f97316" />
         )}
       </View>
       <View className="flex-1 ml-4">
@@ -33,7 +34,7 @@ export default function ExerciseCard({ exercise, onPress }: ExerciseCardProps) {
           </View>
         </View>
       </View>
-      <Text className="text-zinc-500 text-lg">›</Text>
+      <Ionicons name="chevron-forward" size={18} color="#71717a" />
     </TouchableOpacity>
   )
 }

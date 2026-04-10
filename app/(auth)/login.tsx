@@ -79,15 +79,6 @@ export default function LoginScreen() {
           </Text>
         </TouchableOpacity>
 
-        {__DEV__ && (
-          <TouchableOpacity
-            className="mt-8 border border-zinc-700 rounded-xl py-3 items-center"
-            onPress={() => router.push('/(auth)/onboarding' as never)}
-            activeOpacity={0.8}
-          >
-            <Text className="text-zinc-500 text-xs font-semibold">🛠 DEV: View Onboarding</Text>
-          </TouchableOpacity>
-        )}
       </View>
     </KeyboardAvoidingView>
   )

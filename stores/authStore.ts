@@ -19,5 +19,5 @@ export const useAuthStore = create<AuthStore>((set) => ({
   setSession: (session) => set({ session }),
   setProfile: (profile) => set({ profile }),
   setHydrated: (hydrated) => set({ hydrated }),
-  clearAuth: () => set({ session: null, profile: null, hydrated: false }),
+  clearAuth: () => set((state) => ({ session: null, profile: null, hydrated: state.hydrated })),
 }))

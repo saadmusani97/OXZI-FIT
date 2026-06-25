@@ -29,7 +29,7 @@ function RingProgress({ progress }: { progress: number }) {
   return (
     <View style={{ width: RING_SIZE, height: RING_SIZE, alignItems: 'center', justifyContent: 'center' }}>
       {/* Track */}
-      <View style={{ position: 'absolute', width: RING_SIZE, height: RING_SIZE, borderRadius: RING_SIZE / 2, borderWidth: STROKE, borderColor: '#f0ece8' }} />
+      <View style={{ position: 'absolute', width: RING_SIZE, height: RING_SIZE, borderRadius: RING_SIZE / 2, borderWidth: STROKE, borderColor: 'rgba(255,255,255,0.08)' }} />
 
       {/* Progress arc — left half */}
       <View style={{ position: 'absolute', width: RING_SIZE, height: RING_SIZE, borderRadius: RING_SIZE / 2, overflow: 'hidden' }}>
@@ -39,7 +39,7 @@ function RingProgress({ progress }: { progress: number }) {
             width: RING_SIZE, height: RING_SIZE,
             borderRadius: RING_SIZE / 2,
             borderWidth: STROKE,
-            borderColor: p > 0.5 ? '#c2410c' : 'transparent',
+            borderColor: p > 0.5 ? '#F66C3F' : 'transparent',
             borderRightColor: 'transparent',
             borderTopColor: 'transparent',
             transform: [{ rotate: `${Math.min(p * 360, 180) - 180}deg` }],
@@ -51,7 +51,7 @@ function RingProgress({ progress }: { progress: number }) {
             width: RING_SIZE, height: RING_SIZE,
             borderRadius: RING_SIZE / 2,
             borderWidth: STROKE,
-            borderColor: p > 0 ? '#c2410c' : 'transparent',
+            borderColor: p > 0 ? '#F66C3F' : 'transparent',
             borderLeftColor: 'transparent',
             borderTopColor: 'transparent',
             transform: [{ rotate: `${Math.max(p * 360 - 180, 0)}deg` }],
@@ -60,12 +60,12 @@ function RingProgress({ progress }: { progress: number }) {
       </View>
 
       {/* Inner content */}
-      <View style={{ width: innerSize, height: innerSize, borderRadius: innerSize / 2, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-        <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(194,65,12,0.1)', alignItems: 'center', justifyContent: 'center' }}>
-          <Ionicons name="flame" size={22} color="#c2410c" />
+      <View style={{ width: innerSize, height: innerSize, borderRadius: innerSize / 2, backgroundColor: '#1C1C1E', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+        <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(246,108,63,0.15)', alignItems: 'center', justifyContent: 'center' }}>
+          <Ionicons name="flame" size={22} color="#F66C3F" />
         </View>
-        <Text style={{ color: '#111827', fontSize: 24, fontWeight: '900', marginTop: 4 }}>{pct}%</Text>
-        <Text style={{ color: '#9a7b6e', fontSize: 11, fontWeight: '700' }}>of goal</Text>
+        <Text style={{ color: '#FFFFFF', fontSize: 24, fontWeight: '900', marginTop: 4 }}>{pct}%</Text>
+        <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, fontWeight: '700' }}>of goal</Text>
       </View>
     </View>
   )
@@ -182,48 +182,48 @@ export default function HomeScreen() {
   const activeMinutes = data.todayWorkouts * 30
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#f5f3f0' }}>
+    <View style={{ flex: 1, backgroundColor: '#0E0E0E' }}>
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 110 }}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#c2410c" colors={['#c2410c']} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#F66C3F" colors={['#F66C3F']} />}
         >
           {/* Header */}
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 22, paddingTop: 16, marginBottom: 6 }}>
-            <View style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: '#c2410c', alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: '#F66C3F', alignItems: 'center', justifyContent: 'center' }}>
               <Ionicons name="flame" size={22} color="#fff" />
             </View>
-            <Text style={{ color: '#111827', fontSize: 15, fontWeight: '900', letterSpacing: 1.5, textTransform: 'uppercase' }}>OXZIFIT</Text>
-            <TouchableOpacity onPress={() => router.push('/(tabs)/leaderboard' as never)} style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 }}>
-              <Ionicons name="notifications-outline" size={20} color="#111827" />
+            <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '900', letterSpacing: 1.5, textTransform: 'uppercase' }}>OXZIFIT</Text>
+            <TouchableOpacity onPress={() => router.push('/(tabs)/leaderboard' as never)} style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: '#28292D', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 }}>
+              <Ionicons name="notifications-outline" size={20} color="#FFFFFF" />
               {data.myRank && data.myRank <= 10 && (
-                <View style={{ position: 'absolute', top: 8, right: 8, width: 8, height: 8, borderRadius: 4, backgroundColor: '#c2410c' }} />
+                <View style={{ position: 'absolute', top: 8, right: 8, width: 8, height: 8, borderRadius: 4, backgroundColor: '#F66C3F' }} />
               )}
             </TouchableOpacity>
           </View>
 
           {/* Welcome */}
           <View style={{ paddingHorizontal: 22, marginBottom: 24, marginTop: 10 }}>
-            <Text style={{ color: '#111827', fontSize: 32, fontWeight: '900', lineHeight: 38 }}>Welcome back,{'\n'}{firstName}</Text>
-            <Text style={{ color: '#9a7b6e', fontSize: 14, marginTop: 6 }}>
+            <Text style={{ color: '#FFFFFF', fontSize: 32, fontWeight: '900', lineHeight: 38 }}>Welcome back,{'\n'}{firstName}</Text>
+            <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, marginTop: 6 }}>
               {status === 'active' ? 'Your tracker is live.' : 'Your Sanctuary is ready.'}
             </Text>
           </View>
 
           {/* Energy Card */}
-          <View style={{ marginHorizontal: 22, backgroundColor: '#fff', borderRadius: 28, padding: 24, marginBottom: 20, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 16, elevation: 3 }}>
-            <Text style={{ color: '#c2410c', fontSize: 11, fontWeight: '800', letterSpacing: 1.4, textTransform: 'uppercase', textAlign: 'center', marginBottom: 4 }}>Step Burn</Text>
-            <Text style={{ color: '#111827', fontSize: 44, fontWeight: '900', textAlign: 'center', letterSpacing: -1 }}>
+          <View style={{ marginHorizontal: 22, backgroundColor: '#28292D', borderRadius: 28, padding: 24, marginBottom: 20, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 16, elevation: 3 }}>
+            <Text style={{ color: '#F66C3F', fontSize: 11, fontWeight: '800', letterSpacing: 1.4, textTransform: 'uppercase', textAlign: 'center', marginBottom: 4 }}>Step Burn</Text>
+            <Text style={{ color: '#FFFFFF', fontSize: 44, fontWeight: '900', textAlign: 'center', letterSpacing: -1 }}>
               {Math.round(caloriesBurned).toLocaleString()}
             </Text>
-            <Text style={{ color: '#9a7b6e', fontSize: 14, textAlign: 'center', marginBottom: 20 }}>
+            <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, textAlign: 'center', marginBottom: 20 }}>
               {steps.toLocaleString()} steps today
             </Text>
 
             <TouchableOpacity
               onPress={() => router.push('/(tabs)/calories' as never)}
-              style={{ backgroundColor: '#c2410c', borderRadius: 50, paddingVertical: 14, alignItems: 'center', marginBottom: 28 }}
+              style={{ backgroundColor: '#F66C3F', borderRadius: 50, paddingVertical: 14, alignItems: 'center', marginBottom: 28 }}
               activeOpacity={0.85}
             >
               <Text style={{ color: '#fff', fontSize: 15, fontWeight: '800' }}>Open Meal Log</Text>
@@ -238,10 +238,10 @@ export default function HomeScreen() {
           <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingHorizontal: 22, marginBottom: 28 }}>
             {QUICK_ACTIONS.map(action => (
               <TouchableOpacity key={action.label} onPress={() => router.push(action.route as never)} style={{ alignItems: 'center', gap: 8 }} activeOpacity={0.75}>
-                <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.07, shadowRadius: 10, elevation: 2 }}>
-                  <Ionicons name={action.icon} size={22} color="#111827" />
+                <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: '#28292D', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 10, elevation: 2 }}>
+                  <Ionicons name={action.icon} size={22} color="#FFFFFF" />
                 </View>
-                <Text style={{ color: '#6b5e58', fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 }}>{action.label}</Text>
+                <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 }}>{action.label}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -249,66 +249,66 @@ export default function HomeScreen() {
           {/* Daily Vitals */}
           <View style={{ paddingHorizontal: 22, marginBottom: 16 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-              <Text style={{ color: '#111827', fontSize: 20, fontWeight: '900' }}>Daily Vitals</Text>
+              <Text style={{ color: '#FFFFFF', fontSize: 20, fontWeight: '900' }}>Daily Vitals</Text>
               <TouchableOpacity onPress={() => router.push('/(tabs)/profile' as never)}>
-                <Text style={{ color: '#c2410c', fontSize: 13, fontWeight: '800' }}>VIEW ALL</Text>
+                <Text style={{ color: '#F66C3F', fontSize: 13, fontWeight: '800' }}>VIEW ALL</Text>
               </TouchableOpacity>
             </View>
 
             {loading ? (
-              <ActivityIndicator color="#c2410c" style={{ marginVertical: 20 }} />
+              <ActivityIndicator color="#F66C3F" style={{ marginVertical: 20 }} />
             ) : (
               <>
                 <View style={{ flexDirection: 'row', gap: 12, marginBottom: 12 }}>
-                  <View style={{ flex: 1, backgroundColor: '#fff', borderRadius: 22, padding: 18, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10, elevation: 2 }}>
-                    <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(194,65,12,0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
-                      <Ionicons name="walk-outline" size={18} color="#c2410c" />
+                  <View style={{ flex: 1, backgroundColor: '#28292D', borderRadius: 22, padding: 18, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 10, elevation: 2 }}>
+                    <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(246,108,63,0.15)', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+                      <Ionicons name="walk-outline" size={18} color="#F66C3F" />
                     </View>
-                    <Text style={{ color: '#111827', fontSize: 26, fontWeight: '900' }}>{steps.toLocaleString()}</Text>
-                    <Text style={{ color: '#9a7b6e', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 4 }}>Steps</Text>
-                    <View style={{ backgroundColor: '#f0ece8', borderRadius: 4, height: 4, marginTop: 10 }}>
-                      <View style={{ backgroundColor: '#c2410c', borderRadius: 4, height: 4, width: `${Math.min(progress * 100, 100)}%` }} />
+                    <Text style={{ color: '#FFFFFF', fontSize: 26, fontWeight: '900' }}>{steps.toLocaleString()}</Text>
+                    <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 4 }}>Steps</Text>
+                    <View style={{ backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 4, height: 4, marginTop: 10 }}>
+                      <View style={{ backgroundColor: '#F66C3F', borderRadius: 4, height: 4, width: `${Math.min(progress * 100, 100)}%` }} />
                     </View>
                   </View>
 
-                  <View style={{ flex: 1, backgroundColor: '#fff', borderRadius: 22, padding: 18, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10, elevation: 2 }}>
-                    <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(194,65,12,0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
-                      <Ionicons name="timer-outline" size={18} color="#c2410c" />
+                  <View style={{ flex: 1, backgroundColor: '#28292D', borderRadius: 22, padding: 18, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 10, elevation: 2 }}>
+                    <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(246,108,63,0.15)', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+                      <Ionicons name="timer-outline" size={18} color="#F66C3F" />
                     </View>
-                    <Text style={{ color: '#111827', fontSize: 26, fontWeight: '900' }}>{activeMinutes}</Text>
-                    <Text style={{ color: '#9a7b6e', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 4 }}>Active Min</Text>
-                    <View style={{ backgroundColor: '#f0ece8', borderRadius: 4, height: 4, marginTop: 10 }}>
-                      <View style={{ backgroundColor: '#c2410c', borderRadius: 4, height: 4, width: `${Math.min((activeMinutes / 60) * 100, 100)}%` }} />
+                    <Text style={{ color: '#FFFFFF', fontSize: 26, fontWeight: '900' }}>{activeMinutes}</Text>
+                    <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 4 }}>Active Min</Text>
+                    <View style={{ backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 4, height: 4, marginTop: 10 }}>
+                      <View style={{ backgroundColor: '#F66C3F', borderRadius: 4, height: 4, width: `${Math.min((activeMinutes / 60) * 100, 100)}%` }} />
                     </View>
                   </View>
                 </View>
 
                 <View style={{ flexDirection: 'row', gap: 12, marginBottom: 12 }}>
-                  <View style={{ flex: 1, backgroundColor: '#fff', borderRadius: 22, padding: 18, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10, elevation: 2 }}>
-                    <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(194,65,12,0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
-                      <Ionicons name="trail-sign-outline" size={18} color="#c2410c" />
+                  <View style={{ flex: 1, backgroundColor: '#28292D', borderRadius: 22, padding: 18, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 10, elevation: 2 }}>
+                    <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(246,108,63,0.15)', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+                      <Ionicons name="trail-sign-outline" size={18} color="#F66C3F" />
                     </View>
-                    <Text style={{ color: '#111827', fontSize: 26, fontWeight: '900' }}>{distanceKm.toFixed(1)}</Text>
-                    <Text style={{ color: '#9a7b6e', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 4 }}>km Today</Text>
+                    <Text style={{ color: '#FFFFFF', fontSize: 26, fontWeight: '900' }}>{distanceKm.toFixed(1)}</Text>
+                    <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 4 }}>km Today</Text>
                   </View>
 
-                  <View style={{ flex: 1, backgroundColor: '#fff', borderRadius: 22, padding: 18, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10, elevation: 2 }}>
-                    <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(194,65,12,0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
-                      <Ionicons name="flame-outline" size={18} color="#c2410c" />
+                  <View style={{ flex: 1, backgroundColor: '#28292D', borderRadius: 22, padding: 18, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 10, elevation: 2 }}>
+                    <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(246,108,63,0.15)', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+                      <Ionicons name="flame-outline" size={18} color="#F66C3F" />
                     </View>
-                    <Text style={{ color: '#111827', fontSize: 26, fontWeight: '900' }}>{streakCount}</Text>
-                    <Text style={{ color: '#9a7b6e', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 4 }}>Day Streak</Text>
+                    <Text style={{ color: '#FFFFFF', fontSize: 26, fontWeight: '900' }}>{streakCount}</Text>
+                    <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 4 }}>Day Streak</Text>
                   </View>
                 </View>
 
                 {stepMilestone && (
-                  <View style={{ backgroundColor: '#fff', borderRadius: 22, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 12, borderLeftWidth: 4, borderLeftColor: '#22c55e' }}>
+                  <View style={{ backgroundColor: '#28292D', borderRadius: 22, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 12, borderLeftWidth: 4, borderLeftColor: '#22c55e' }}>
                     <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(34,197,94,0.12)', alignItems: 'center', justifyContent: 'center' }}>
                       <Ionicons name="checkmark-circle" size={22} color="#22c55e" />
                     </View>
                     <View style={{ flex: 1 }}>
-                      <Text style={{ color: '#111827', fontSize: 14, fontWeight: '800' }}>{stepMilestone}% step goal reached</Text>
-                      <Text style={{ color: '#9a7b6e', fontSize: 12, marginTop: 2 }}>{steps.toLocaleString()} steps so far today</Text>
+                      <Text style={{ color: '#FFFFFF', fontSize: 14, fontWeight: '800' }}>{stepMilestone}% step goal reached</Text>
+                      <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginTop: 2 }}>{steps.toLocaleString()} steps so far today</Text>
                     </View>
                   </View>
                 )}
@@ -318,13 +318,13 @@ export default function HomeScreen() {
 
           {/* Coach Insight */}
           <View style={{ marginHorizontal: 22 }}>
-            <View style={{ backgroundColor: '#fff', borderRadius: 22, padding: 18, flexDirection: 'row', alignItems: 'flex-start', gap: 14, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10, elevation: 2 }}>
-              <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(194,65,12,0.1)', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <Ionicons name="bulb-outline" size={22} color="#c2410c" />
+            <View style={{ backgroundColor: '#28292D', borderRadius: 22, padding: 18, flexDirection: 'row', alignItems: 'flex-start', gap: 14, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 10, elevation: 2 }}>
+              <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(246,108,63,0.15)', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Ionicons name="bulb-outline" size={22} color="#F66C3F" />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ color: '#111827', fontSize: 14, fontWeight: '900', marginBottom: 4 }}>OXZIFIT Coach Insight</Text>
-                <Text style={{ color: '#6b5e58', fontSize: 13, lineHeight: 20 }}>
+                <Text style={{ color: '#FFFFFF', fontSize: 14, fontWeight: '900', marginBottom: 4 }}>OXZIFIT Coach Insight</Text>
+                <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, lineHeight: 20 }}>
                   {Math.round(mealProgress * 100) < 50
                     ? `Great start, ${firstName}! You're ${Math.round(mealProgress * 100)}% to your daily meal goal. Keep logging meals to stay on track.`
                     : Math.round(mealProgress * 100) < 90

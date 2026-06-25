@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { LinearGradient } from 'expo-linear-gradient'
 import { BlurView } from 'expo-blur'
 import { Ionicons } from '@expo/vector-icons'
 import { router } from 'expo-router'
@@ -20,8 +19,8 @@ interface Stats {
 
 function GlassPanel({ children, style }: { children: React.ReactNode; style?: object }) {
   return (
-    <BlurView intensity={45} tint="light" style={[{ borderRadius: 30, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.78)' }, style]}>
-      <View style={{ backgroundColor: 'rgba(255,255,255,0.58)', padding: 18 }}>
+    <BlurView intensity={28} tint="dark" style={[{ borderRadius: 30, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' }, style]}>
+      <View style={{ backgroundColor: 'rgba(28,28,30,0.85)', padding: 18 }}>
         {children}
       </View>
     </BlurView>
@@ -32,7 +31,7 @@ function LiquidIconButton({
   icon,
   label,
   onPress,
-  color = '#f97316',
+  color = '#F66C3F',
 }: {
   icon: IoniconName
   label: string
@@ -41,12 +40,12 @@ function LiquidIconButton({
 }) {
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.86} style={{ flex: 1 }}>
-      <BlurView intensity={42} tint="light" style={{ borderRadius: 24, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.76)' }}>
-        <View style={{ backgroundColor: 'rgba(255,255,255,0.48)', alignItems: 'center', paddingVertical: 16, gap: 10 }}>
+      <BlurView intensity={28} tint="dark" style={{ borderRadius: 24, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' }}>
+        <View style={{ backgroundColor: 'rgba(28,28,30,0.85)', alignItems: 'center', paddingVertical: 16, gap: 10 }}>
           <View style={{ width: 46, height: 46, borderRadius: 23, backgroundColor: `${color}16`, alignItems: 'center', justifyContent: 'center' }}>
             <Ionicons name={icon} size={20} color={color} />
           </View>
-          <Text style={{ color: '#7c2d12', fontSize: 12, fontWeight: '800' }}>{label}</Text>
+          <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, fontWeight: '800' }}>{label}</Text>
         </View>
       </BlurView>
     </TouchableOpacity>
@@ -67,11 +66,11 @@ function MetricCard({
   return (
     <GlassPanel style={{ flex: 1 }}>
       <View style={{ gap: 8 }}>
-        <View style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: accent ? 'rgba(249,115,22,0.16)' : 'rgba(255,255,255,0.44)', alignItems: 'center', justifyContent: 'center' }}>
-          <Ionicons name={icon} size={18} color={accent ? '#f97316' : '#c2410c'} />
+        <View style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: accent ? 'rgba(246,108,63,0.16)' : 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' }}>
+          <Ionicons name={icon} size={18} color={accent ? '#F66C3F' : '#F66C3F'} />
         </View>
-        <Text style={{ color: '#111827', fontSize: 22, fontWeight: '900' }}>{value}</Text>
-        <Text style={{ color: '#9a3412', fontSize: 12, fontWeight: '700' }}>{label}</Text>
+        <Text style={{ color: '#FFFFFF', fontSize: 22, fontWeight: '900' }}>{value}</Text>
+        <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, fontWeight: '700' }}>{label}</Text>
       </View>
     </GlassPanel>
   )
@@ -87,12 +86,12 @@ function DetailRow({
   value: string
 }) {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: 'rgba(249,115,22,0.08)' }}>
-      <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: 'rgba(249,115,22,0.12)', alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
-        <Ionicons name={icon} size={16} color="#f97316" />
+    <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.06)' }}>
+      <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: 'rgba(246,108,63,0.12)', alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
+        <Ionicons name={icon} size={16} color="#F66C3F" />
       </View>
-      <Text style={{ flex: 1, color: '#9a3412', fontSize: 14 }}>{label}</Text>
-      <Text style={{ color: '#111827', fontSize: 14, fontWeight: '800', textTransform: 'capitalize' }}>{value}</Text>
+      <Text style={{ flex: 1, color: 'rgba(255,255,255,0.5)', fontSize: 14 }}>{label}</Text>
+      <Text style={{ color: '#FFFFFF', fontSize: 14, fontWeight: '800', textTransform: 'capitalize' }}>{value}</Text>
     </View>
   )
 }
@@ -168,27 +167,23 @@ export default function ProfileScreen() {
   const activityLevelLabel = profile?.activity_level?.replace(/_/g, ' ') ?? 'Not set'
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff7f0' }}>
-      <LinearGradient colors={['#fffdf8', '#fff5ea', '#fff0e0']} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
-      <View style={{ position: 'absolute', top: -70, right: -20, width: 220, height: 220, borderRadius: 110, backgroundColor: 'rgba(249,115,22,0.12)' }} />
-      <View style={{ position: 'absolute', top: 280, left: -70, width: 240, height: 240, borderRadius: 120, backgroundColor: 'rgba(251,146,60,0.08)' }} />
-
+    <View style={{ flex: 1, backgroundColor: '#0E0E0E' }}>
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 100 }}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#f97316" colors={['#f97316']} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#F66C3F" colors={['#F66C3F']} />}
           showsVerticalScrollIndicator={false}
         >
           <View style={{ marginTop: 16, marginBottom: 18, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: '#7c2d12', fontSize: 12, fontWeight: '800', letterSpacing: 1.2, textTransform: 'uppercase' }}>Account Center</Text>
-              <Text style={{ color: '#111827', fontSize: 32, fontWeight: '900', marginTop: 6 }}>Profile</Text>
+              <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, fontWeight: '800', letterSpacing: 1.2, textTransform: 'uppercase' }}>Account Center</Text>
+              <Text style={{ color: '#FFFFFF', fontSize: 32, fontWeight: '900', marginTop: 6 }}>Profile</Text>
             </View>
             <TouchableOpacity onPress={handleLogout} activeOpacity={0.86}>
-              <BlurView intensity={40} tint="light" style={{ borderRadius: 22, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.78)' }}>
-                <View style={{ width: 48, height: 48, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.48)' }}>
-                  <Ionicons name="log-out-outline" size={20} color="#ea580c" />
+              <BlurView intensity={28} tint="dark" style={{ borderRadius: 22, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' }}>
+                <View style={{ width: 48, height: 48, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(28,28,30,0.85)' }}>
+                  <Ionicons name="log-out-outline" size={20} color="#F66C3F" />
                 </View>
               </BlurView>
             </TouchableOpacity>
@@ -196,23 +191,23 @@ export default function ProfileScreen() {
 
           <GlassPanel style={{ marginBottom: 18 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
-              <View style={{ width: 86, height: 86, borderRadius: 43, backgroundColor: 'rgba(249,115,22,0.15)', borderWidth: 1.5, borderColor: 'rgba(249,115,22,0.28)', alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ color: '#f97316', fontSize: 30, fontWeight: '900' }}>{initials}</Text>
+              <View style={{ width: 86, height: 86, borderRadius: 43, backgroundColor: 'rgba(246,108,63,0.15)', borderWidth: 1.5, borderColor: 'rgba(246,108,63,0.28)', alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ color: '#F66C3F', fontSize: 30, fontWeight: '900' }}>{initials}</Text>
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ color: '#111827', fontSize: 24, fontWeight: '900' }}>{profile?.full_name ?? 'Athlete'}</Text>
-                <Text style={{ color: '#9a3412', fontSize: 13, marginTop: 4 }}>{session?.user?.email ?? 'No email'}</Text>
+                <Text style={{ color: '#FFFFFF', fontSize: 24, fontWeight: '900' }}>{profile?.full_name ?? 'Athlete'}</Text>
+                <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, marginTop: 4 }}>{session?.user?.email ?? 'No email'}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
-                  <BlurView intensity={35} tint="light" style={{ borderRadius: 999, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.72)' }}>
-                    <View style={{ paddingHorizontal: 12, paddingVertical: 8, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,255,255,0.46)' }}>
-                      <Ionicons name="flag-outline" size={12} color="#f97316" />
-                      <Text style={{ color: '#7c2d12', fontSize: 12, fontWeight: '800', textTransform: 'capitalize' }}>{fitnessGoalLabel}</Text>
+                  <BlurView intensity={25} tint="dark" style={{ borderRadius: 999, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' }}>
+                    <View style={{ paddingHorizontal: 12, paddingVertical: 8, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(246,108,63,0.15)' }}>
+                      <Ionicons name="flag-outline" size={12} color="#F66C3F" />
+                      <Text style={{ color: '#F66C3F', fontSize: 12, fontWeight: '800', textTransform: 'capitalize' }}>{fitnessGoalLabel}</Text>
                     </View>
                   </BlurView>
-                  <BlurView intensity={35} tint="light" style={{ borderRadius: 999, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.72)' }}>
-                    <View style={{ paddingHorizontal: 12, paddingVertical: 8, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,255,255,0.46)' }}>
-                      <Ionicons name="pulse-outline" size={12} color="#f97316" />
-                      <Text style={{ color: '#7c2d12', fontSize: 12, fontWeight: '800', textTransform: 'capitalize' }}>{activityLevelLabel}</Text>
+                  <BlurView intensity={25} tint="dark" style={{ borderRadius: 999, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' }}>
+                    <View style={{ paddingHorizontal: 12, paddingVertical: 8, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(246,108,63,0.15)' }}>
+                      <Ionicons name="pulse-outline" size={12} color="#F66C3F" />
+                      <Text style={{ color: '#F66C3F', fontSize: 12, fontWeight: '800', textTransform: 'capitalize' }}>{activityLevelLabel}</Text>
                     </View>
                   </BlurView>
                 </View>
@@ -232,11 +227,11 @@ export default function ProfileScreen() {
           </View>
 
           {loading ? (
-            <ActivityIndicator color="#f97316" style={{ marginTop: 80 }} />
+            <ActivityIndicator color="#F66C3F" style={{ marginTop: 80 }} />
           ) : (
             <>
               <GlassPanel style={{ marginBottom: 18 }}>
-                <Text style={{ color: '#111827', fontSize: 18, fontWeight: '900', marginBottom: 14 }}>Performance Snapshot</Text>
+                <Text style={{ color: '#FFFFFF', fontSize: 18, fontWeight: '900', marginBottom: 14 }}>Performance Snapshot</Text>
                 <View style={{ flexDirection: 'row', gap: 12, marginBottom: 12 }}>
                   <MetricCard icon="footsteps-outline" label="All Steps" value={stats.totalSteps.toLocaleString()} accent />
                   <MetricCard icon="trail-sign-outline" label="Distance" value={`${stats.totalKm.toFixed(1)} km`} />
@@ -251,8 +246,8 @@ export default function ProfileScreen() {
               </GlassPanel>
 
               <GlassPanel style={{ marginBottom: 18 }}>
-                <Text style={{ color: '#111827', fontSize: 18, fontWeight: '900', marginBottom: 6 }}>Body and Preferences</Text>
-                <Text style={{ color: '#9a3412', fontSize: 13, marginBottom: 10 }}>Core profile values used across tracking, goals, and insights.</Text>
+                <Text style={{ color: '#FFFFFF', fontSize: 18, fontWeight: '900', marginBottom: 6 }}>Body and Preferences</Text>
+                <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, marginBottom: 10 }}>Core profile values used across tracking, goals, and insights.</Text>
                 <DetailRow icon="resize-outline" label="Height" value={profile?.height_cm ? `${profile.height_cm} cm` : 'Not set'} />
                 <DetailRow icon="body-outline" label="Weight" value={profile?.weight_kg ? `${profile.weight_kg} kg` : 'Not set'} />
                 <DetailRow icon="walk-outline" label="Daily Step Goal" value={profile?.daily_step_goal?.toLocaleString() ?? '10,000'} />

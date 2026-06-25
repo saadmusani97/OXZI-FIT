@@ -4,9 +4,9 @@ import {
   Alert, Animated, Dimensions, Modal, StatusBar, TextInput, ActivityIndicator
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { Ionicons } from '@expo/vector-icons'
 import { BlurView } from 'expo-blur'
 import { LinearGradient } from 'expo-linear-gradient'
-import { Ionicons } from '@expo/vector-icons'
 import { supabase } from '../../lib/supabase'
 import { useAuthStore } from '../../stores/authStore'
 import { scanFoodImage, pickImageFromGallery, takePhoto, NutritionResult, IngredientResult } from '../../lib/calAi'
@@ -15,8 +15,8 @@ import Svg, { Circle } from 'react-native-svg'
 
 const { height: SH } = Dimensions.get('window')
 
-const RING_SIZE = 80
-const STROKE = 7
+const RING_SIZE = 90
+const STROKE = 8
 const RADIUS = (RING_SIZE - STROKE) / 2
 const CIRC = 2 * Math.PI * RADIUS
 
@@ -55,15 +55,85 @@ const GRADE_COLORS: Record<string, string> = {
 function EnergyRing({ progress }: { progress: number }) {
   const p = Math.min(Math.max(progress, 0), 1)
   const offset = CIRC * (1 - p)
+  const OUTER = 130
+  const INNER = 108
+
   return (
-    <View style={{ width: RING_SIZE, height: RING_SIZE, alignItems: 'center', justifyContent: 'center' }}>
+    <View style={{ width: OUTER, height: OUTER, alignItems: 'center', justifyContent: 'center' }}>
+
+      {/* Outer sphere — big dark glossy dome */}
+      <LinearGradient
+        colors={['#323236', '#242426', '#18181a']}
+        start={{ x: 0.15, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{
+          position: 'absolute',
+          width: OUTER,
+          height: OUTER,
+          borderRadius: OUTER / 2,
+          borderWidth: 1,
+          borderColor: 'rgba(255,255,255,0.06)',
+        }}
+      />
+
+      {/* Outer gloss top-left */}
+      <View style={{
+        position: 'absolute',
+        top: 10,
+        left: 14,
+        width: 50,
+        height: 28,
+        borderRadius: 20,
+        backgroundColor: 'rgba(255,255,255,0.09)',
+        transform: [{ rotate: '-25deg' }],
+      }} />
+
+      {/* Inner dome — darker inset sphere */}
+      <LinearGradient
+        colors={['#2a2a2d', '#1c1c1e', '#111113']}
+        start={{ x: 0.2, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{
+          position: 'absolute',
+          width: INNER,
+          height: INNER,
+          borderRadius: INNER / 2,
+          borderWidth: 1,
+          borderColor: 'rgba(255,255,255,0.04)',
+        }}
+      />
+
+      {/* Inner gloss top-left */}
+      <View style={{
+        position: 'absolute',
+        top: 16,
+        left: 18,
+        width: 36,
+        height: 18,
+        borderRadius: 14,
+        backgroundColor: 'rgba(255,255,255,0.07)',
+        transform: [{ rotate: '-20deg' }],
+      }} />
+
+      {/* SVG Ring */}
       <Svg width={RING_SIZE} height={RING_SIZE} style={{ position: 'absolute' }}>
-        <Circle cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={RADIUS} stroke="rgba(255,255,255,0.25)" strokeWidth={STROKE} fill="none" />
-        <Circle cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={RADIUS} stroke="#fff" strokeWidth={STROKE} fill="none"
-          strokeDasharray={`${CIRC} ${CIRC}`} strokeDashoffset={offset}
-          strokeLinecap="round" rotation="-90" origin={`${RING_SIZE / 2},${RING_SIZE / 2}`} />
+        <Circle
+          cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={RADIUS}
+          stroke="rgba(255,255,255,0.06)" strokeWidth={STROKE} fill="none"
+        />
+        <Circle
+          cx={RING_SIZE / 2} cy={RING_SIZE / 2} r={RADIUS}
+          stroke="#F66C3F" strokeWidth={STROKE} fill="none"
+          strokeDasharray={`${CIRC} ${CIRC}`}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          rotation="-90"
+          origin={`${RING_SIZE / 2},${RING_SIZE / 2}`}
+        />
       </Svg>
-      <Text style={{ color: '#fff', fontSize: 14, fontWeight: '900' }}>{Math.round(p * 100)}%</Text>
+
+      {/* Percent text */}
+      <Text style={{ color: '#F66C3F', fontSize: 14, fontWeight: '900' }}>{Math.round(p * 100)}%</Text>
     </View>
   )
 }
@@ -502,115 +572,120 @@ export default function CaloriesScreen() {
   }))
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#f5f3f0' }}>
+    <View style={{ flex: 1, backgroundColor: '#0E0E0E' }}>
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 110 }}>
 
           {/* Header */}
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 22, paddingTop: 16, marginBottom: 16 }}>
-            <View style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: '#c2410c', alignItems: 'center', justifyContent: 'center' }}>
-              <Ionicons name="flame" size={22} color="#fff" />
+            <View style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: '#28292D', alignItems: 'center', justifyContent: 'center' }}>
+              <Ionicons name="flame" size={22} color="#F66C3F" />
             </View>
-            <Text style={{ color: '#111827', fontSize: 15, fontWeight: '900', letterSpacing: 1.5, textTransform: 'uppercase' }}>OXZIFIT</Text>
-            <TouchableOpacity onPress={() => setSheetVisible(true)} style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 }}>
-              <Ionicons name="add" size={22} color="#c2410c" />
+            <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '900', letterSpacing: 1.5, textTransform: 'uppercase' }}>OXZIFIT</Text>
+            <TouchableOpacity onPress={() => setSheetVisible(true)} style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: '#28292D', alignItems: 'center', justifyContent: 'center' }}>
+              <Ionicons name="calendar-outline" size={20} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
 
           {/* Date */}
           <View style={{ paddingHorizontal: 22, marginBottom: 16 }}>
-            <Text style={{ color: '#9a7b6e', fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 }}>Meal Plan</Text>
+            <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 }}>Meal Plan</Text>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
-              <Text style={{ color: '#111827', fontSize: 26, fontWeight: '900' }}>{dateLabel}</Text>
-              <View style={{ width: 38, height: 38, borderRadius: 10, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 6, elevation: 2 }}>
-                <Ionicons name="calendar-outline" size={18} color="#c2410c" />
-              </View>
+              <Text style={{ color: '#FFFFFF', fontSize: 26, fontWeight: '900' }}>{dateLabel}</Text>
             </View>
           </View>
 
           {/* Energy Balance Card */}
-          <View style={{ marginHorizontal: 22, backgroundColor: '#c2410c', borderRadius: 28, padding: 22, marginBottom: 24 }}>
-            <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11, fontWeight: '800', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8 }}>Daily Energy Balance</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-              <View style={{ flex: 1 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 6 }}>
-                  <Text style={{ color: '#fff', fontSize: 42, fontWeight: '900', lineHeight: 46 }}>{totalCalories.toLocaleString()}</Text>
-                  <Text style={{ color: 'rgba(255,255,255,0.65)', fontSize: 15, marginBottom: 6 }}>/ {dailyCalGoal.toLocaleString()} kcal</Text>
+          <View style={{ marginHorizontal: 22, borderRadius: 28, marginBottom: 24, overflow: 'hidden' }}>
+            <LinearGradient
+              colors={['#2e2e32', '#242426', '#1a1a1c']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{ padding: 22, borderRadius: 28, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' }}
+            >
+              <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, fontWeight: '800', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8 }}>Daily Energy Balance</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <View style={{ flex: 1 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 6 }}>
+                    <Text style={{ color: '#fff', fontSize: 42, fontWeight: '900', lineHeight: 46 }}>{totalCalories.toLocaleString()}</Text>
+                    <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 15, marginBottom: 6 }}>/ {dailyCalGoal.toLocaleString()} kcal</Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', gap: 20, marginTop: 14 }}>
+                    <View>
+                      <Text style={{ color: '#F66C3F', fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 }}>Protein</Text>
+                      <Text style={{ color: '#fff', fontSize: 16, fontWeight: '900', marginTop: 2 }}>{Math.round(totalProtein)}g</Text>
+                    </View>
+                    <View>
+                      <Text style={{ color: '#F66C3F', fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 }}>Carbs</Text>
+                      <Text style={{ color: '#fff', fontSize: 16, fontWeight: '900', marginTop: 2 }}>{Math.round(totalCarbs)}g</Text>
+                    </View>
+                    <View>
+                      <Text style={{ color: '#F66C3F', fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 }}>Fats</Text>
+                      <Text style={{ color: '#fff', fontSize: 16, fontWeight: '900', marginTop: 2 }}>{Math.round(totalFat)}g</Text>
+                    </View>
+                  </View>
                 </View>
-                <View style={{ flexDirection: 'row', gap: 20, marginTop: 14 }}>
-                  <View>
-                    <Text style={{ color: 'rgba(255,255,255,0.65)', fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 }}>Protein</Text>
-                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: '900', marginTop: 2 }}>{Math.round(totalProtein)}g</Text>
-                  </View>
-                  <View>
-                    <Text style={{ color: 'rgba(255,255,255,0.65)', fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 }}>Carbs</Text>
-                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: '900', marginTop: 2 }}>{Math.round(totalCarbs)}g</Text>
-                  </View>
-                  <View>
-                    <Text style={{ color: 'rgba(255,255,255,0.65)', fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 }}>Fats</Text>
-                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: '900', marginTop: 2 }}>{Math.round(totalFat)}g</Text>
-                  </View>
-                </View>
+                <EnergyRing progress={calProgress} />
               </View>
-              <EnergyRing progress={calProgress} />
-            </View>
+            </LinearGradient>
           </View>
 
           {/* Meal Breakdown */}
           <View style={{ paddingHorizontal: 22 }}>
-            <Text style={{ color: '#111827', fontSize: 20, fontWeight: '900', marginBottom: 16 }}>Meal Breakdown</Text>
+            <Text style={{ color: '#FFFFFF', fontSize: 20, fontWeight: '900', marginBottom: 16 }}>Meal Breakdown</Text>
 
             {loadingMeals ? (
-              <ActivityIndicator color="#c2410c" style={{ marginVertical: 32 }} />
+              <ActivityIndicator color="#F66C3F" style={{ marginVertical: 32 }} />
             ) : meals.length === 0 ? (
-              <View style={{ backgroundColor: '#fff', borderRadius: 20, padding: 32, alignItems: 'center', gap: 10, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 10, elevation: 1 }}>
-                <View style={{ width: 52, height: 52, borderRadius: 26, backgroundColor: 'rgba(194,65,12,0.1)', alignItems: 'center', justifyContent: 'center' }}>
-                  <Ionicons name="restaurant-outline" size={26} color="#c2410c" />
+              <View style={{ backgroundColor: '#28292D', borderRadius: 20, padding: 32, alignItems: 'center', gap: 10 }}>
+                <View style={{ width: 52, height: 52, borderRadius: 26, backgroundColor: 'rgba(246,108,63,0.15)', alignItems: 'center', justifyContent: 'center' }}>
+                  <Ionicons name="restaurant-outline" size={26} color="#F66C3F" />
                 </View>
-                <Text style={{ color: '#111827', fontSize: 15, fontWeight: '800' }}>No meals logged today</Text>
-                <Text style={{ color: '#9a7b6e', fontSize: 13, textAlign: 'center' }}>Tap the + button to scan your first meal</Text>
+                <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '800' }}>No meals logged today</Text>
+                <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, textAlign: 'center' }}>Tap Scan Meal to log your first meal</Text>
               </View>
             ) : (
               mealsByType.map(({ type, meals: typeMeals }) => {
                 if (typeMeals.length === 0) return null
-                const typeColor = MEAL_TYPE_COLORS[type] ?? '#c2410c'
                 return (
                   <View key={type}>
                     {typeMeals.map((meal, idx) => {
                       const grade = calculateMealGrade(meal.calories, meal.protein_g, meal.fat_g).grade
                       return (
-                        <View key={meal.id} style={{ backgroundColor: '#fff', borderRadius: 20, marginBottom: 12, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 10, elevation: 1, overflow: 'hidden' }}>
-                          <View style={{ flexDirection: 'row', alignItems: 'center', padding: 14, gap: 14 }}>
-                            {/* Thumbnail */}
-                            <View style={{ width: 64, height: 64, borderRadius: 14, backgroundColor: typeColor + '18', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                        <View key={meal.id} style={{ borderRadius: 16, marginBottom: 12, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' }}>
+                          <BlurView intensity={15} tint="dark" style={{ overflow: 'hidden' }}>
+                            <View style={{ backgroundColor: 'rgba(40,41,45,0.9)', flexDirection: 'row', alignItems: 'center', padding: 14, gap: 14 }}>
+                            {/* Icon */}
+                            <View style={{ width: 52, height: 52, borderRadius: 14, backgroundColor: 'rgba(255,255,255,0.06)', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                               {meal.image_url ? (
-                                <Image source={{ uri: meal.image_url }} style={{ width: 64, height: 64 }} resizeMode="cover" />
+                                <Image source={{ uri: meal.image_url }} style={{ width: 52, height: 52 }} resizeMode="cover" />
                               ) : (
-                                <Ionicons name="restaurant-outline" size={28} color={typeColor} />
+                                <Ionicons name="restaurant-outline" size={24} color="rgba(255,255,255,0.4)" />
                               )}
                             </View>
 
                             {/* Info */}
                             <View style={{ flex: 1 }}>
                               {idx === 0 && (
-                                <Text style={{ color: typeColor, fontSize: 10, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 3 }}>{type}</Text>
+                                <Text style={{ color: '#F66C3F', fontSize: 10, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 3 }}>{type}</Text>
                               )}
-                              <Text style={{ color: '#111827', fontSize: 15, fontWeight: '800', lineHeight: 20 }} numberOfLines={2}>{meal.food_name}</Text>
-                              <Text style={{ color: '#9a7b6e', fontSize: 12, marginTop: 3 }}>
+                              <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '800', lineHeight: 20 }} numberOfLines={2}>{meal.food_name}</Text>
+                              <Text style={{ color: 'rgba(255,255,255,0.45)', fontSize: 12, marginTop: 3 }}>
                                 {meal.calories} kcal · P: {meal.protein_g}g · C: {meal.carbs_g}g · F: {meal.fat_g}g
                               </Text>
                             </View>
 
                             {/* Grade / Logged badge */}
                             <View style={{ alignItems: 'flex-end', gap: 6 }}>
-                              <View style={{ backgroundColor: (GRADE_COLORS[grade] ?? '#22c55e') + '22', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 }}>
+                              <View style={{ backgroundColor: (GRADE_COLORS[grade] ?? '#22c55e') + '33', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 }}>
                                 <Text style={{ color: GRADE_COLORS[grade] ?? '#22c55e', fontSize: 12, fontWeight: '900' }}>{grade}</Text>
                               </View>
-                              <View style={{ backgroundColor: '#c2410c', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 5 }}>
+                              <View style={{ backgroundColor: '#F66C3F', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 5 }}>
                                 <Text style={{ color: '#fff', fontSize: 11, fontWeight: '800' }}>Logged</Text>
                               </View>
                             </View>
                           </View>
+                          </BlurView>
                         </View>
                       )
                     })}
@@ -624,21 +699,21 @@ export default function CaloriesScreen() {
               <TouchableOpacity
                 onPress={() => setSheetVisible(true)}
                 activeOpacity={0.85}
-                style={{ flex: 1, backgroundColor: '#c2410c', borderRadius: 20, paddingVertical: 20, alignItems: 'center', gap: 8 }}
+                style={{ flex: 1, backgroundColor: '#F66C3F', borderRadius: 20, paddingVertical: 22, alignItems: 'center', gap: 8 }}
               >
-                <Ionicons name="camera-outline" size={24} color="#fff" />
+                <Ionicons name="camera-outline" size={26} color="#fff" />
                 <Text style={{ color: '#fff', fontSize: 13, fontWeight: '800' }}>Scan Meal</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 onPress={() => setSheetVisible(true)}
                 activeOpacity={0.85}
-                style={{ flex: 1, backgroundColor: '#fff', borderRadius: 20, paddingVertical: 20, alignItems: 'center', gap: 8, borderWidth: 2, borderColor: '#e5e0db', borderStyle: 'dashed' }}
+                style={{ flex: 1, backgroundColor: 'transparent', borderRadius: 20, paddingVertical: 22, alignItems: 'center', gap: 8, borderWidth: 1.5, borderColor: '#F66C3F', borderStyle: 'dashed' }}
               >
-                <View style={{ width: 28, height: 28, borderRadius: 14, borderWidth: 2, borderColor: '#9a7b6e', alignItems: 'center', justifyContent: 'center' }}>
-                  <Ionicons name="add" size={18} color="#9a7b6e" />
+                <View style={{ width: 28, height: 28, borderRadius: 14, borderWidth: 2, borderColor: '#F66C3F', alignItems: 'center', justifyContent: 'center' }}>
+                  <Ionicons name="add" size={18} color="#F66C3F" />
                 </View>
-                <Text style={{ color: '#9a7b6e', fontSize: 13, fontWeight: '800', textAlign: 'center' }}>ADD CUSTOM{'\n'}ENTRY</Text>
+                <Text style={{ color: '#F66C3F', fontSize: 13, fontWeight: '800', textAlign: 'center' }}>ADD CUSTOM{'\n'}ENTRY</Text>
               </TouchableOpacity>
             </View>
           </View>

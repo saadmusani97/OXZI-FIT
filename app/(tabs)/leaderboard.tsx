@@ -32,8 +32,8 @@ interface LeaderboardEntry extends LeaderboardRow {
 
 function GlassPanel({ children, style }: { children: React.ReactNode; style?: object }) {
   return (
-    <BlurView intensity={45} tint="light" style={[{ borderRadius: 30, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.78)' }, style]}>
-      <View style={{ backgroundColor: 'rgba(255,255,255,0.58)', padding: 18 }}>
+    <BlurView intensity={28} tint="dark" style={[{ borderRadius: 30, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' }, style]}>
+      <View style={{ backgroundColor: 'rgba(28,28,30,0.85)', padding: 18 }}>
         {children}
       </View>
     </BlurView>
@@ -42,7 +42,7 @@ function GlassPanel({ children, style }: { children: React.ReactNode; style?: ob
 
 function LiquidIcon({
   icon,
-  color = '#f97316',
+  color = '#F66C3F',
   size = 18,
 }: {
   icon: IoniconName
@@ -50,8 +50,8 @@ function LiquidIcon({
   size?: number
 }) {
   return (
-    <BlurView intensity={40} tint="light" style={{ borderRadius: 18, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.75)' }}>
-      <View style={{ width: 38, height: 38, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.45)' }}>
+    <BlurView intensity={28} tint="dark" style={{ borderRadius: 18, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' }}>
+      <View style={{ width: 38, height: 38, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(28,28,30,0.85)' }}>
         <Ionicons name={icon} size={size} color={color} />
       </View>
     </BlurView>
@@ -69,9 +69,9 @@ function LeaderChip({
 }) {
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.86} style={{ flex: 1 }}>
-      <BlurView intensity={40} tint="light" style={{ borderRadius: 18, overflow: 'hidden', borderWidth: 1, borderColor: active ? 'rgba(249,115,22,0.35)' : 'rgba(255,255,255,0.68)' }}>
-        <View style={{ backgroundColor: active ? 'rgba(249,115,22,0.92)' : 'rgba(255,255,255,0.45)', paddingVertical: 12, alignItems: 'center' }}>
-          <Text style={{ color: active ? '#fff' : '#7c2d12', fontSize: 13, fontWeight: '800', textTransform: 'capitalize' }}>{label}</Text>
+      <BlurView intensity={28} tint="dark" style={{ borderRadius: 18, overflow: 'hidden', borderWidth: 1, borderColor: active ? 'rgba(246,108,63,0.35)' : 'rgba(255,255,255,0.07)' }}>
+        <View style={{ backgroundColor: active ? '#F66C3F' : 'rgba(28,28,30,0.85)', paddingVertical: 12, alignItems: 'center' }}>
+          <Text style={{ color: active ? '#fff' : 'rgba(255,255,255,0.5)', fontSize: 13, fontWeight: '800', textTransform: 'capitalize' }}>{label}</Text>
         </View>
       </BlurView>
     </TouchableOpacity>
@@ -194,23 +194,19 @@ export default function LeaderboardScreen() {
   }, [podium])
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff7f0' }}>
-      <LinearGradient colors={['#fffdf8', '#fff5ea', '#fff0e3']} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
-      <View style={{ position: 'absolute', top: -70, right: -30, width: 220, height: 220, borderRadius: 110, backgroundColor: 'rgba(249,115,22,0.12)' }} />
-      <View style={{ position: 'absolute', top: 240, left: -80, width: 240, height: 240, borderRadius: 120, backgroundColor: 'rgba(251,146,60,0.1)' }} />
-
+    <View style={{ flex: 1, backgroundColor: '#0E0E0E' }}>
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 100 }}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#f97316" colors={['#f97316']} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#F66C3F" colors={['#F66C3F']} />}
           showsVerticalScrollIndicator={false}
         >
           <View style={{ marginTop: 16, marginBottom: 18, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <View style={{ flex: 1, paddingRight: 16 }}>
-              <Text style={{ color: '#7c2d12', fontSize: 12, fontWeight: '800', letterSpacing: 1.2, textTransform: 'uppercase' }}>Performance Board</Text>
-              <Text style={{ color: '#111827', fontSize: 31, fontWeight: '900', marginTop: 6 }}>Leaderboard</Text>
-              <Text style={{ color: '#9a3412', fontSize: 14, marginTop: 6 }}>{formatMonthLabel(currentMonth)}</Text>
+              <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, fontWeight: '800', letterSpacing: 1.2, textTransform: 'uppercase' }}>Performance Board</Text>
+              <Text style={{ color: '#FFFFFF', fontSize: 31, fontWeight: '900', marginTop: 6 }}>Leaderboard</Text>
+              <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, marginTop: 6 }}>{formatMonthLabel(currentMonth)}</Text>
             </View>
             <LiquidIcon icon="trophy-outline" size={22} />
           </View>
@@ -223,7 +219,7 @@ export default function LeaderboardScreen() {
           </GlassPanel>
 
           <GlassPanel style={{ marginBottom: 18 }}>
-            <Text style={{ color: '#111827', fontSize: 16, fontWeight: '900', marginBottom: 12 }}>How Ranking Works</Text>
+            <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '900', marginBottom: 12 }}>How Ranking Works</Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
               {[
                 '1 pt / 1,000 steps',
@@ -232,21 +228,21 @@ export default function LeaderboardScreen() {
                 '1 pt / km tracked',
                 '5 pts / streak day',
               ].map(rule => (
-                <View key={rule} style={{ borderRadius: 999, paddingHorizontal: 12, paddingVertical: 8, backgroundColor: 'rgba(249,115,22,0.12)' }}>
-                  <Text style={{ color: '#9a3412', fontSize: 12, fontWeight: '800' }}>{rule}</Text>
+                <View key={rule} style={{ borderRadius: 999, paddingHorizontal: 12, paddingVertical: 8, backgroundColor: 'rgba(246,108,63,0.15)' }}>
+                  <Text style={{ color: '#F66C3F', fontSize: 12, fontWeight: '800' }}>{rule}</Text>
                 </View>
               ))}
             </View>
           </GlassPanel>
 
           {loading ? (
-            <ActivityIndicator color="#f97316" size="large" style={{ marginTop: 80 }} />
+            <ActivityIndicator color="#F66C3F" size="large" style={{ marginTop: 80 }} />
           ) : entries.length === 0 ? (
             <GlassPanel>
               <View style={{ alignItems: 'center', paddingVertical: 10 }}>
                 <LiquidIcon icon="sparkles-outline" />
-                <Text style={{ color: '#111827', fontSize: 18, fontWeight: '800', marginTop: 14 }}>No leaderboard entries yet</Text>
-                <Text style={{ color: '#9a3412', fontSize: 14, textAlign: 'center', marginTop: 8 }}>
+                <Text style={{ color: '#FFFFFF', fontSize: 18, fontWeight: '800', marginTop: 14 }}>No leaderboard entries yet</Text>
+                <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, textAlign: 'center', marginTop: 8 }}>
                   Start logging steps, meals, workouts, and routes to populate the monthly rankings.
                 </Text>
               </View>
@@ -255,8 +251,8 @@ export default function LeaderboardScreen() {
             <>
               <GlassPanel style={{ marginBottom: 18 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                  <Text style={{ color: '#111827', fontSize: 18, fontWeight: '900' }}>Top Performers</Text>
-                  <Text style={{ color: '#9a3412', fontSize: 12, fontWeight: '700' }}>Top {entries.length}</Text>
+                  <Text style={{ color: '#FFFFFF', fontSize: 18, fontWeight: '900' }}>Top Performers</Text>
+                  <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, fontWeight: '700' }}>Top {entries.length}</Text>
                 </View>
 
                 <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12 }}>
@@ -269,18 +265,18 @@ export default function LeaderboardScreen() {
                     return (
                       <View key={entry.user_id} style={{ flex: 1, alignItems: 'center' }}>
                         <AvatarBubble name={name} rank={rank} />
-                        <Text style={{ color: '#111827', fontSize: 13, fontWeight: '800', marginTop: 10 }} numberOfLines={1}>
+                        <Text style={{ color: '#FFFFFF', fontSize: 13, fontWeight: '800', marginTop: 10 }} numberOfLines={1}>
                           {name.split(' ')[0]}
                         </Text>
-                        <Text style={{ color: '#f97316', fontSize: 13, fontWeight: '900', marginTop: 4 }}>{entry.total_points} pts</Text>
-                        <View style={{ width: '100%', height, marginTop: 12, borderRadius: 26, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.78)' }}>
-                          <LinearGradient colors={isWinner ? ['#fb923c', '#f97316'] : ['#fff5ec', '#ffe3cf']} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <Text style={{ color: '#F66C3F', fontSize: 13, fontWeight: '900', marginTop: 4 }}>{entry.total_points} pts</Text>
+                        <View style={{ width: '100%', height, marginTop: 12, borderRadius: 26, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' }}>
+                          <LinearGradient colors={isWinner ? ['#F66C3F', '#e05a32'] : ['#2a2a2e', '#1c1c1e']} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                             <Ionicons
                               name={rank === 1 ? 'trophy' : rank === 2 ? 'medal-outline' : 'ribbon-outline'}
                               size={isWinner ? 34 : 26}
-                              color={isWinner ? '#fff' : '#f97316'}
+                              color={isWinner ? '#fff' : '#F66C3F'}
                             />
-                            <Text style={{ color: isWinner ? '#fff' : '#c2410c', fontSize: 28, fontWeight: '900', marginTop: 8 }}>#{rank}</Text>
+                            <Text style={{ color: isWinner ? '#fff' : '#FFFFFF', fontSize: 28, fontWeight: '900', marginTop: 8 }}>#{rank}</Text>
                           </LinearGradient>
                         </View>
                       </View>
@@ -297,20 +293,20 @@ export default function LeaderboardScreen() {
                   return (
                     <GlassPanel key={entry.user_id}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                        <Text style={{ width: 28, color: '#9a3412', fontSize: 14, fontWeight: '900' }}>#{rank}</Text>
+                        <Text style={{ width: 28, color: 'rgba(255,255,255,0.5)', fontSize: 14, fontWeight: '900' }}>#{rank}</Text>
                         <AvatarBubble name={name} />
                         <View style={{ flex: 1 }}>
                           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                            <Text style={{ color: isMe ? '#f97316' : '#111827', fontSize: 15, fontWeight: '900' }}>{name}</Text>
-                            {isMe ? <Text style={{ color: '#f97316', fontSize: 11, fontWeight: '800' }}>YOU</Text> : null}
+                            <Text style={{ color: isMe ? '#F66C3F' : '#FFFFFF', fontSize: 15, fontWeight: '900' }}>{name}</Text>
+                            {isMe ? <Text style={{ color: '#F66C3F', fontSize: 11, fontWeight: '800' }}>YOU</Text> : null}
                           </View>
-                          <Text style={{ color: '#9a3412', fontSize: 12, marginTop: 4 }}>
+                          <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginTop: 4 }}>
                             Steps {entry.step_points} · Workouts {entry.workout_points} · Meals {entry.meal_points} · Routes {entry.route_points} · Streak {entry.streak_points}
                           </Text>
                         </View>
                         <View style={{ alignItems: 'flex-end' }}>
-                          <Text style={{ color: '#111827', fontSize: 17, fontWeight: '900' }}>{entry.total_points}</Text>
-                          <Text style={{ color: '#9a3412', fontSize: 11, fontWeight: '700' }}>points</Text>
+                          <Text style={{ color: '#FFFFFF', fontSize: 17, fontWeight: '900' }}>{entry.total_points}</Text>
+                          <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, fontWeight: '700' }}>points</Text>
                         </View>
                       </View>
                     </GlassPanel>
@@ -323,13 +319,13 @@ export default function LeaderboardScreen() {
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                     <LiquidIcon icon="person-outline" />
                   <View style={{ flex: 1 }}>
-                    <Text style={{ color: '#111827', fontSize: 15, fontWeight: '900' }}>Your standing</Text>
-                    <Text style={{ color: '#9a3412', fontSize: 13, marginTop: 2 }}>Rank #{myRank} in the current view</Text>
-                    <Text style={{ color: '#9a3412', fontSize: 12, marginTop: 4 }}>
+                    <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '900' }}>Your standing</Text>
+                    <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, marginTop: 2 }}>Rank #{myRank} in the current view</Text>
+                    <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginTop: 4 }}>
                       Steps {myEntry.step_points} · Workouts {myEntry.workout_points} · Meals {myEntry.meal_points} · Routes {myEntry.route_points} · Streak {myEntry.streak_points}
                     </Text>
                   </View>
-                  <Text style={{ color: '#f97316', fontSize: 18, fontWeight: '900' }}>{myEntry.total_points}</Text>
+                  <Text style={{ color: '#F66C3F', fontSize: 18, fontWeight: '900' }}>{myEntry.total_points}</Text>
                 </View>
                 </GlassPanel>
               ) : null}

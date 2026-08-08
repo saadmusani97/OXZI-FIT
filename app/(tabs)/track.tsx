@@ -404,7 +404,7 @@ export default function TrackScreen() {
       return
     }
 
-    const message = `Track me live on OXZIFIT: https://maps.google.com/?q=${currentLocation.latitude},${currentLocation.longitude}`
+    const message = `Track me live on Synra: https://maps.google.com/?q=${currentLocation.latitude},${currentLocation.longitude}`
 
     try {
       await NativeShare.share({ message })

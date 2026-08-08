@@ -90,7 +90,7 @@ export default function OnboardingScreen() {
   return (
     <KeyboardAvoidingView style={{ flex: 1, backgroundColor: '#000' }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24, paddingTop: 64, paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
-        <Text style={{ color: '#f97316', fontSize: 28, fontWeight: '900', textAlign: 'center', letterSpacing: 4, marginBottom: 8 }}>OXZIFIT</Text>
+        <Text style={{ color: '#f97316', fontSize: 28, fontWeight: '900', textAlign: 'center', letterSpacing: 4, marginBottom: 8 }}>Synra</Text>
         <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 8, marginBottom: 4 }}>
           {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
             <View key={i} style={{ height: 8, borderRadius: 4, backgroundColor: i === step ? '#f97316' : '#3f3f46', width: i === step ? 24 : 8 }} />

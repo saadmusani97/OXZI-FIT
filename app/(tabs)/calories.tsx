@@ -581,7 +581,7 @@ export default function CaloriesScreen() {
             <View style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: '#28292D', alignItems: 'center', justifyContent: 'center' }}>
               <Ionicons name="flame" size={22} color="#F66C3F" />
             </View>
-            <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '900', letterSpacing: 1.5, textTransform: 'uppercase' }}>OXZIFIT</Text>
+            <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '900', letterSpacing: 1.5, textTransform: 'uppercase' }}>Synra</Text>
             <TouchableOpacity onPress={() => setSheetVisible(true)} style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: '#28292D', alignItems: 'center', justifyContent: 'center' }}>
               <Ionicons name="calendar-outline" size={20} color="#FFFFFF" />
             </TouchableOpacity>

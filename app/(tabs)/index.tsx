@@ -194,7 +194,7 @@ export default function HomeScreen() {
             <View style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: '#F66C3F', alignItems: 'center', justifyContent: 'center' }}>
               <Ionicons name="flame" size={22} color="#fff" />
             </View>
-            <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '900', letterSpacing: 1.5, textTransform: 'uppercase' }}>OXZIFIT</Text>
+            <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '900', letterSpacing: 1.5, textTransform: 'uppercase' }}>Synra</Text>
             <TouchableOpacity onPress={() => router.push('/(tabs)/leaderboard' as never)} style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: '#28292D', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 }}>
               <Ionicons name="notifications-outline" size={20} color="#FFFFFF" />
               {data.myRank && data.myRank <= 10 && (
@@ -323,7 +323,7 @@ export default function HomeScreen() {
                 <Ionicons name="bulb-outline" size={22} color="#F66C3F" />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ color: '#FFFFFF', fontSize: 14, fontWeight: '900', marginBottom: 4 }}>OXZIFIT Coach Insight</Text>
+                <Text style={{ color: '#FFFFFF', fontSize: 14, fontWeight: '900', marginBottom: 4 }}>Synra Coach Insight</Text>
                 <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, lineHeight: 20 }}>
                   {Math.round(mealProgress * 100) < 50
                     ? `Great start, ${firstName}! You're ${Math.round(mealProgress * 100)}% to your daily meal goal. Keep logging meals to stay on track.`

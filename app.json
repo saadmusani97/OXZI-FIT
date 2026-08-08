@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "OXZIFIT",
-    "slug": "oxzifit",
+    "name": "Synra",
+    "slug": "synra",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/adaptive-icon.png",
     "userInterfaceStyle": "light",
-    "scheme": "oxzifit",
+    "scheme": "synra",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -14,12 +14,12 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.oxzifit.app",
+      "bundleIdentifier": "com.synra.app",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSMotionUsageDescription": "OXZIFIT uses motion data to count your steps.",
-        "NSLocationWhenInUseUsageDescription": "OXZIFIT uses your location to track workout routes.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "OXZIFIT tracks routes and fitness activity while app is in background.",
+        "NSMotionUsageDescription": "Synra uses motion data to count your steps.",
+        "NSLocationWhenInUseUsageDescription": "Synra uses your location to track workout routes.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Synra tracks routes and fitness activity while app is in background.",
         "UIBackgroundModes": [
           "location"
         ]
@@ -30,7 +30,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#EEEEEE"
       },
-      "package": "com.oxzifit.app",
+      "package": "com.synra.app",
       "permissions": [
         "android.permission.ACTIVITY_RECOGNITION",
         "android.permission.BODY_SENSORS",
@@ -52,8 +52,8 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Allow OXZIFIT to use your location to track routes.",
-          "locationAlwaysAndWhenInUsePermission": "Allow OXZIFIT to track your routes in background during activities.",
+          "locationWhenInUsePermission": "Allow Synra to use your location to track routes.",
+          "locationAlwaysAndWhenInUsePermission": "Allow Synra to track your routes in background during activities.",
           "isAndroidBackgroundLocationEnabled": true,
           "isAndroidForegroundServiceEnabled": true
         }

@@ -22,7 +22,7 @@ export default function ActivityShareCard({ summary }: ActivityShareCardProps) {
     >
       <View style={{ gap: 8 }}>
         <Text style={{ color: 'rgba(255,255,255,0.55)', fontSize: 13, fontWeight: '700', letterSpacing: 1.2, textTransform: 'uppercase' }}>
-          OXZIFIT {summary.activityType}
+          Synra {summary.activityType}
         </Text>
         <Text style={{ color: '#fff', fontSize: 32, fontWeight: '900' }}>
           {formatDistance(summary.distanceKm)}

@@ -6,8 +6,8 @@ import { Platform } from 'react-native'
 import { calculateStepCalories, calculateStepDistance, haversineDistance } from './utils'
 import { supabase } from './supabase'
 
-export const BACKGROUND_FITNESS_TASK = 'OXZIFIT_BACKGROUND_FITNESS_TASK'
-const TRACKING_STATE_KEY = '@oxzifit/background_tracking_state'
+export const BACKGROUND_FITNESS_TASK = 'SYNRA_BACKGROUND_FITNESS_TASK'
+const TRACKING_STATE_KEY = '@synra/background_tracking_state'
 const MIN_GPS_ACCURACY_METERS = 5
 const MAX_GPS_ACCURACY_METERS = 20
 const GPS_PROCESS_NOISE_METERS_PER_SECOND = 3
@@ -405,7 +405,7 @@ function getLocationUpdateOptions(): Location.LocationTaskOptions {
     activityType: Location.ActivityType.Fitness,
     pausesUpdatesAutomatically: true,
     foregroundService: {
-      notificationTitle: 'OXZIFIT tracking active',
+      notificationTitle: 'Synra tracking active',
       notificationBody: 'Route and steps are being collected in background',
       notificationColor: '#f97316',
     },

@@ -59,7 +59,7 @@ export default function SignupScreen() {
       >
         <View className="flex-1 justify-center">
           <View className="items-center mb-12">
-            <Text className="text-orange-500 text-4xl font-black tracking-widest">OXZIFIT</Text>
+            <Text className="text-orange-500 text-4xl font-black tracking-widest">Synra</Text>
             <Text className="text-zinc-400 text-sm mt-1">Create your account</Text>
           </View>
 

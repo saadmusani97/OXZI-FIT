@@ -64,7 +64,7 @@ export async function shareImage(uri: string, target: ShareTarget): Promise<void
       social: shareModule.Social.WHATSAPP,
       url: uri,
       type: 'image/png',
-      filename: 'oxzifit-activity.png',
+      filename: 'synra-activity.png',
     })
     return
   }
@@ -73,7 +73,7 @@ export async function shareImage(uri: string, target: ShareTarget): Promise<void
     await shareModule.open({
       url: uri,
       type: 'image/png',
-      filename: 'oxzifit-activity.png',
+      filename: 'synra-activity.png',
     })
     return
   }
